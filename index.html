@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communications | Product Updates and Bulletins</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <header role="banner">
+        <h1>COMMUNICATIONS</h1>
+        <div class="view-controls" role="toolbar" aria-label="View options">
+            <button aria-label="Grid view" class="active">⊞</button>
+            <button aria-label="List view">☰</button>
+            <div class="sort-dropdown">
+                <label for="sort-select">Sort by:</label>
+                <select id="sort-select" aria-label="Sort communications">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+            </div>
+        </div>
+    </header>
+    <div class="divider-line"></div>
+    <div class="page-layout">
+        <nav class="filters" role="navigation" aria-label="Communications filters">
+            <section class="filter-section">
+                <h2>Filter by Keyword</h2>
+                <div class="search-container" role="search">
+                    <label for="keyword-search" class="visually-hidden">Search communications</label>
+                    <input type="search" id="keyword-search" placeholder="Enter keyword">
+                </div>
+            </section>
+
+            <section class="filter-section">
+                <h2>Timeframe</h2>
+                <select id="timeframe-select" aria-label="Select timeframe">
+                    <option value="all">All Time</option>
+                    <!-- Additional options will be populated from JSON data -->
+                </select>
+            </section>
+
+            <section class="filter-section">
+                <h2>Topic</h2>
+                <ul class="filter-list" role="group" aria-label="Topic filters">
+                    <li>
+                        <input type="checkbox" id="codes-standards" name="topic">
+                        <label for="codes-standards">Codes & Standards</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="fan-energy" name="topic">
+                        <label for="fan-energy">Fan Energy Index</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="indoor-air" name="topic">
+                        <label for="indoor-air">Indoor Air Quality</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="system-balancing" name="topic">
+                        <label for="system-balancing">System Balancing</label>
+                    </li>
+                </ul>
+                <button class="view-more" aria-expanded="false">View More</button>
+            </section>
+
+            <section class="filter-section">
+                <h2>Product Category</h2>
+                <ul class="filter-list" role="group" aria-label="Product category filters">
+                    <li>
+                        <input type="checkbox" id="fans" name="category">
+                        <label for="fans">Fans</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="dampers" name="category">
+                        <label for="dampers">Dampers</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="louvers" name="category">
+                        <label for="louvers">Louvers</label>
+                    </li>
+                </ul>
+                <button class="view-more" aria-expanded="false">View More</button>
+            </section>
+
+            <section class="filter-section">
+                <h2>Communication Type</h2>
+                <ul class="filter-list" role="group" aria-label="Communication type filters">
+                    <li>
+                        <input type="checkbox" id="insights" name="type">
+                        <label for="insights">Insights</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="caps-update" name="type">
+                        <label for="caps-update">CAPS Update</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="bulletin" name="type">
+                        <label for="bulletin">Bulletin</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="rep-update" name="type">
+                        <label for="rep-update">Rep Update</label>
+                    </li>
+                </ul>
+            </section>
+
+            <a href="#" class="archive-link">View archived communications prior to January 2025.</a>
+        </nav>
+
+        <main id="main-content" role="main">
+            <div class="results-count" aria-live="polite">
+                <p>Results: <span id="communication-count">264</span> Communications</p>
+            </div>
+
+            <div class="communications-grid" role="feed" aria-busy="false">
+                <!-- Communication cards will be dynamically populated from JSON data -->
+                <article class="communication-card" role="article">
+                    <div class="card-image">
+                        <img src="path/to/image" alt="Models Sp-A50-90VG and SP A90-130-VG" loading="lazy">
+                    </div>
+                    <div class="card-content">
+                        <h3><a href="#">Models Sp-A50-90VG and SP A90-130-VG Production Pause</a></h3>
+                        <div class="card-metadata">
+                            <time datetime="2024-07-25">July 25th 2024</time>
+                            <span class="issue-number">Issue #2</span>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">Indoor Air Quality</span>
+                            <span class="tag">Louvers</span>
+                        </div>
+                        <div class="card-type">
+                            <span class="icon-bulletin" aria-hidden="true"></span>
+                            <span>Bulletin</span>
+                        </div>
+                        <a href="#" class="view-button" aria-label="View Models Sp-A50-90VG and SP A90-130-VG Production Pause bulletin">VIEW</a>
+                    </div>
+                </article>
+            </div>
+
+            <button class="load-more" aria-label="Load more communications">LOAD MORE</button>
+        </main>
+    </div>
+
+    <script src="app.js" defer></script>
+</body>
+</html>
