@@ -1,3 +1,75 @@
+// Search index service - responsible for indexing and searching data
+class SearchIndexService {
+  constructor(data) {
+    this.data = data;
+    this.titleIndex = new Map();
+    this.indexData();
+  }
+
+  indexData() {
+    // Create an index of words to items for faster search
+    this.data.forEach(item => {
+      // Tokenize the title into words
+      const words = item.title.toLowerCase().split(/\s+/);
+
+      // Add each word to the index
+      words.forEach(word => {
+        if (!this.titleIndex.has(word)) {
+          this.titleIndex.set(word, []);
+        }
+        if (!this.titleIndex.get(word).includes(item)) {
+          this.titleIndex.get(word).push(item);
+        }
+      });
+    });
+  }
+
+  search(query) {
+    if (!query || query.trim() === "") {
+      return [];
+    }
+
+    const searchTerm = query.toLowerCase().trim();
+
+    // Get exact matches
+    const exactMatches = this.titleIndex.get(searchTerm) || [];
+
+    // Get suggestions (words that start with the search term)
+    const suggestions = [];
+    this.titleIndex.forEach((items, word) => {
+      if (word.startsWith(searchTerm) && word !== searchTerm) {
+        items.forEach(item => {
+          if (!suggestions.includes(item) && !exactMatches.includes(item)) {
+            suggestions.push(item);
+          }
+        });
+      }
+    });
+
+    // Combine exact matches and suggestions
+    return [...exactMatches, ...suggestions];
+  }
+
+  getSuggestions(prefix, limit = 5) {
+    if (!prefix || prefix.trim() === "") {
+      return [];
+    }
+
+    const searchTerm = prefix.toLowerCase().trim();
+    const suggestions = new Set();
+
+    // Find words that start with the prefix
+    this.titleIndex.forEach((_, word) => {
+      if (word.startsWith(searchTerm)) {
+        suggestions.add(word);
+      }
+    });
+
+    // Convert set to array, sort alphabetically and limit results
+    return Array.from(suggestions).sort().slice(0, limit);
+  }
+}
+
 // Data layer - responsible for managing and filtering data
 class CommunicationDataService {
   constructor(rawData) {
@@ -8,6 +80,8 @@ class CommunicationDataService {
       "product-categories": [],
       "communication-type": []
     };
+    this.searchTerm = "";
+    this.searchIndex = new SearchIndexService(rawData);
   }
 
   getUniqueValues(property) {
@@ -28,39 +102,57 @@ class CommunicationDataService {
     this.applyFilters();
   }
 
+  updateSearch(searchTerm) {
+    this.searchTerm = searchTerm;
+    this.applyFilters();
+  }
+
+  getSuggestions(prefix) {
+    return this.searchIndex.getSuggestions(prefix);
+  }
+
   applyFilters() {
-    // If no filters are active, return all data
-    if (Object.values(this.activeFilters).every(filters => filters.length === 0)) {
-      this.filteredData = [...this.data];
-      return;
+    // Start with all data
+    let result = [...this.data];
+
+    // Apply search if there is a search term
+    if (this.searchTerm && this.searchTerm.trim() !== "") {
+      const searchResults = this.searchIndex.search(this.searchTerm);
+      result = result.filter(item => searchResults.includes(item));
     }
 
-    this.filteredData = this.data.filter(item => {
-      // Check if item matches all filter categories
-      return Object.entries(this.activeFilters).every(([filterType, selectedValues]) => {
-        // If no filters of this type are selected, this filter passes
-        if (selectedValues.length === 0) {
-          return true;
-        }
+    // Apply category filters
+    // If no filters are active, keep all data after search
+    if (!Object.values(this.activeFilters).every(filters => filters.length === 0)) {
+      result = result.filter(item => {
+        // Check if item matches all filter categories
+        return Object.entries(this.activeFilters).every(([filterType, selectedValues]) => {
+          // If no filters of this type are selected, this filter passes
+          if (selectedValues.length === 0) {
+            return true;
+          }
 
-        // Map filter type to item property
-        let itemProperty;
-        switch (filterType) {
-          case "topics":
-            itemProperty = item.topic;
-            break;
-          case "product-categories":
-            itemProperty = item.productCategory;
-            break;
-          case "communication-type":
-            itemProperty = item.communication;
-            break;
-        }
+          // Map filter type to item property
+          let itemProperty;
+          switch (filterType) {
+            case "topics":
+              itemProperty = item.topic;
+              break;
+            case "product-categories":
+              itemProperty = item.productCategory;
+              break;
+            case "communication-type":
+              itemProperty = item.communication;
+              break;
+          }
 
-        // Check if the item's property is in the selected values
-        return selectedValues.includes(itemProperty);
+          // Check if the item's property is in the selected values
+          return selectedValues.includes(itemProperty);
+        });
       });
-    });
+    }
+
+    this.filteredData = result;
   }
 
   getFilteredData() {
@@ -138,6 +230,103 @@ class FilterComponent {
   }
 }
 
+class SearchComponent {
+  constructor(container, searchCallback, suggestCallback) {
+    this.container = container;
+    this.searchCallback = searchCallback;
+    this.suggestCallback = suggestCallback;
+    this.debounceTimeout = null;
+  }
+
+  render() {
+    // No need to render HTML elements as they are now included in the HTML file
+    this.attachEventListeners();
+  }
+
+  attachEventListeners() {
+    const searchInput = document.getElementById("search-input");
+    const searchButton = document.getElementById("search-button");
+    const suggestionsContainer = document.getElementById("search-suggestions");
+
+    // Search input event
+    searchInput.addEventListener("input", () => {
+      const value = searchInput.value;
+
+      // Clear previous timeout
+      if (this.debounceTimeout) {
+        clearTimeout(this.debounceTimeout);
+      }
+
+      // Debounce search to avoid too many updates
+      this.debounceTimeout = setTimeout(() => {
+        // Update search results
+        this.searchCallback(value);
+
+        // Show suggestions if input has value
+        if (value.trim()) {
+          const suggestions = this.suggestCallback(value);
+          this.renderSuggestions(suggestions);
+        } else {
+          // Clear suggestions if input is empty
+          suggestionsContainer.innerHTML = "";
+          suggestionsContainer.style.display = "none";
+        }
+      }, 300);
+    });
+
+    // Search button click
+    searchButton.addEventListener("click", () => {
+      this.searchCallback(searchInput.value);
+      suggestionsContainer.innerHTML = "";
+      suggestionsContainer.style.display = "none";
+    });
+
+    // Handle Enter key
+    searchInput.addEventListener("keypress", e => {
+      if (e.key === "Enter") {
+        this.searchCallback(searchInput.value);
+        suggestionsContainer.innerHTML = "";
+        suggestionsContainer.style.display = "none";
+      }
+    });
+
+    // Close suggestions when clicking outside
+    document.addEventListener("click", e => {
+      if (!this.container.contains(e.target)) {
+        suggestionsContainer.innerHTML = "";
+        suggestionsContainer.style.display = "none";
+      }
+    });
+  }
+
+  renderSuggestions(suggestions) {
+    const suggestionsContainer = document.getElementById("search-suggestions");
+
+    if (suggestions.length === 0) {
+      suggestionsContainer.innerHTML = "";
+      suggestionsContainer.style.display = "none";
+      return;
+    }
+
+    const suggestionHTML = suggestions
+      .map(suggestion => `<div class="suggestion-item">${suggestion}</div>`)
+      .join("");
+
+    suggestionsContainer.innerHTML = suggestionHTML;
+    suggestionsContainer.style.display = "block";
+
+    // Add click event to suggestions
+    document.querySelectorAll(".suggestion-item").forEach(item => {
+      item.addEventListener("click", () => {
+        document.getElementById("search-input").value = item.textContent;
+        this.searchCallback(item.textContent);
+        suggestionsContainer.innerHTML = "";
+        suggestionsContainer.style.display = "none";
+      });
+    });
+  }
+}
+
 class CardListComponent {
   constructor(container, countElement) {
     this.container = container;
@@ -171,6 +360,10 @@ class CardListComponent {
   }
 
   constructCardHTML(items) {
+    if (items.length === 0) {
+      return '<div class="no-results">No matching communications found. Try adjusting your filters or search term.</div>';
+    }
+
     return items
       .map(
         item => `
@@ -237,105 +430,106 @@ class CardListComponent {
 // Application Controller - coordinates between data and UI components
 class CommunicationApp {
   constructor() {
+    // Data array is initialized here
     this.data = [
       {
         id: "1",
-        title: "Sample Title 1",
+        title: "Models 5V-400-WVG and GF ARG-150-TK Production Panels",
         imageUrl: "https://picsum.photos/400/300?1",
         url: "https://www.greenheck.com/products",
-        date: "August 1th 2024",
-        issueNumber: "Issue #1",
-        productCategory: "Indoor Air Quality",
+        date: "July 27th 2024",
+        issueNumber: "Issue #2",
+        productCategory: "Louvers",
         topic: "Diffusers",
         communication: "Bulletin"
       },
       {
         id: "2",
-        title: "Sample Title 2",
+        title: "Square Ceiling Diffuser 24x24 Models Size Option Now Available",
         imageUrl: "https://picsum.photos/400/300?2",
         url: "https://www.greenheck.com/products",
-        date: "August 2th 2024",
-        issueNumber: "Issue #2",
-        productCategory: "Louvers",
-        topic: "RSQ",
-        communication: "Rep Update"
+        date: "July 23rd 2024",
+        issueNumber: "Issue #1",
+        productCategory: "Diffusers",
+        topic: "Indoor Air Quality",
+        communication: "No Update"
       },
       {
         id: "3",
-        title: "Sample Title 3",
+        title: "CAPS-IAQ Announcement",
         imageUrl: "https://picsum.photos/400/300?3",
         url: "https://www.greenheck.com/products",
-        date: "August 3th 2024",
+        date: "August 8th 2024",
         issueNumber: "Issue #3",
-        productCategory: "Indoor Air Quality",
-        topic: "RSQ",
-        communication: "Bulletin"
-      },
-      {
-        id: "4",
-        title: "Sample Title 4",
-        imageUrl: "https://picsum.photos/400/300?4",
-        url: "https://www.greenheck.com/products",
-        date: "August 4th 2024",
-        issueNumber: "Issue #4",
-        productCategory: "Louvers",
-        topic: "Diffusers",
+        productCategory: "Software",
+        topic: "User Update",
         communication: "Rep Update"
       },
       {
-        id: "5",
-        title: "Sample Title 5",
-        imageUrl: "https://picsum.photos/400/300?5",
+        id: "4",
+        title: "RSQ - New Product Release",
+        imageUrl: "https://picsum.photos/400/300?4",
         url: "https://www.greenheck.com/products",
-        date: "August 5th 2024",
-        issueNumber: "Issue #5",
-        productCategory: "Indoor Air Quality",
-        topic: "Software",
+        date: "July 29th 2024",
+        issueNumber: "Bulletin #1-24",
+        productCategory: "RSQ",
+        topic: "Louvers",
         communication: "Bulletin"
       },
       {
+        id: "5",
+        title: "Square Ceiling Diffuser 24x24 Models Size Option Now Available",
+        imageUrl: "https://picsum.photos/400/300?5",
+        url: "https://www.greenheck.com/products",
+        date: "July 23rd 2024",
+        issueNumber: "Issue #1",
+        productCategory: "Diffusers",
+        topic: "Indoor Air Quality",
+        communication: "No Update"
+      },
+      {
         id: "6",
-        title: "Sample Title 6",
+        title: "CAPS-IAQ Announcement",
         imageUrl: "https://picsum.photos/400/300?6",
         url: "https://www.greenheck.com/products",
-        date: "August 6th 2024",
-        issueNumber: "Issue #1",
-        productCategory: "Louvers",
-        topic: "RSQ",
+        date: "August 8th 2024",
+        issueNumber: "Issue #3",
+        productCategory: "Software",
+        topic: "User Update",
         communication: "Rep Update"
       },
       {
         id: "7",
-        title: "Sample Title 7",
+        title: "Models 5V-400-WVG and GF ARG-150-TK Production Panels",
         imageUrl: "https://picsum.photos/400/300?7",
         url: "https://www.greenheck.com/products",
-        date: "August 7th 2024",
+        date: "July 27th 2024",
         issueNumber: "Issue #2",
-        productCategory: "Indoor Air Quality",
+        productCategory: "Louvers",
         topic: "Diffusers",
         communication: "Bulletin"
       },
       {
         id: "8",
-        title: "Sample Title 8",
+        title: "Square Ceiling Diffuser 24x24 Models Size Option Now Available",
         imageUrl: "https://picsum.photos/400/300?8",
         url: "https://www.greenheck.com/products",
-        date: "August 8th 2024",
-        issueNumber: "Issue #3",
-        productCategory: "Louvers",
-        topic: "RSQ",
-        communication: "Rep Update"
+        date: "July 23rd 2024",
+        issueNumber: "Issue #1",
+        productCategory: "Diffusers",
+        topic: "Indoor Air Quality",
+        communication: "No Update"
       },
       {
         id: "9",
-        title: "Sample Title 9",
+        title: "CAPS-IAQ Announcement",
         imageUrl: "https://picsum.photos/400/300?9",
         url: "https://www.greenheck.com/products",
-        date: "August 9th 2024",
-        issueNumber: "Issue #4",
-        productCategory: "Indoor Air Quality",
-        topic: "Software",
-        communication: "Bulletin"
+        date: "August 8th 2024",
+        issueNumber: "Issue #3",
+        productCategory: "Software",
+        topic: "User Update",
+        communication: "Rep Update"
       },
       {
         id: "10",
@@ -788,9 +982,11 @@ class CommunicationApp {
         topic: "RSQ",
         communication: "Rep Update"
       }
-    ]; // You would load your data here
+    ];
+
     this.dataService = new CommunicationDataService(this.data);
     this.filtersContainer = document.querySelector("#filters-container");
+    this.searchContainer = document.querySelector("#search-container");
     this.cardsContainer = document.querySelector("#communications-container");
     this.countElement = document.querySelector("#communication-count");
     this.loadMoreButton = document.querySelector(".load-more");
@@ -801,6 +997,9 @@ class CommunicationApp {
   }
 
   initialize() {
+    // Create and render search component
+    this.createSearchComponent();
+
     // Create and render filter components
     this.createFilters();
 
@@ -809,6 +1008,15 @@ class CommunicationApp {
 
     // Setup load more button
     this.setupLoadMoreButton();
+  }
+
+  createSearchComponent() {
+    const searchComponent = new SearchComponent(
+      this.searchContainer,
+      this.handleSearch.bind(this),
+      this.handleSuggestions.bind(this)
+    );
+    searchComponent.render();
   }
 
   createFilters() {
@@ -846,6 +1054,16 @@ class CommunicationApp {
     this.dataService.updateFilter(filterType, value, isChecked);
     this.cardList.resetPagination();
     this.updateDisplay();
+  }
+
+  handleSearch(searchTerm) {
+    this.dataService.updateSearch(searchTerm);
+    this.cardList.resetPagination();
+    this.updateDisplay();
+  }
+
+  handleSuggestions(prefix) {
+    return this.dataService.getSuggestions(prefix);
   }
 
   updateDisplay() {
