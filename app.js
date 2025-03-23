@@ -181,7 +181,7 @@ class FilterComponent {
             ${this.options
               .map(
                 (option, index) => `
-              <li ${index >= this.initialVisibleCount ? `class="hidden-option ${filterId}-hidden" style="display: none;"` : ""}>
+              <li ${index >= this.initialVisibleCount ? `class="hidden-option ${filterId}-hidden" style="display: none;"` : "flex"}>
                 <input type="checkbox" id="${option.toLowerCase().replace(/\s+/g, "-")}" name="${filterId}">
                 <label for="${option.toLowerCase().replace(/\s+/g, "-")}">${option}</label>
               </li>
@@ -191,8 +191,7 @@ class FilterComponent {
           </ul>
           ${
             hasMoreOptions
-              ? `<button class="view-more-btn" data-filter-type="${filterId}">
-              View More</button>`
+              ? `<button type="button" class="view-more" data-filter-type="${filterId}"><i class="fas fa-chevron-down"></i> View More</button>`
               : ""
           }
         </section>
@@ -214,17 +213,19 @@ class FilterComponent {
     });
 
     // Add view more/less event listener
-    const viewMoreBtn = document.querySelector(`#${filterId}-section .view-more-btn`);
+    const viewMoreBtn = document.querySelector(`#${filterId}-section .view-more`);
     if (viewMoreBtn) {
       viewMoreBtn.addEventListener("click", () => {
         const hiddenOptions = document.querySelectorAll(`.${filterId}-hidden`);
         const isShowingMore = viewMoreBtn.textContent.trim() === "View More";
 
         hiddenOptions.forEach(option => {
-          option.style.display = isShowingMore ? "block" : "none";
+          option.style.display = isShowingMore ? "flex" : "none";
         });
 
-        viewMoreBtn.textContent = isShowingMore ? "View Less" : "View More";
+        viewMoreBtn.innerHTML = isShowingMore
+          ? "<i class='fas fa-chevron-up'></i> View Less"
+          : "<i class='fas fa-chevron-down'></i> View More";
       });
     }
   }
@@ -494,7 +495,7 @@ class CommunicationApp {
     this.data = [
       {
         id: "1",
-        title: "Models 5V-400-WVG and GF ARG-150-TK Production Panels",
+        title: "Models Sp-A50-90VG and SP A90-130-VG Production Pause",
         imageUrl: "https://picsum.photos/400/300?1",
         url: "https://www.greenheck.com/products",
         date: "2025-03-27",

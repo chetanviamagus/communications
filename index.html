@@ -3,320 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Communication Center</title>
+    <title>Communication</title>
     <link rel="stylesheet" href="styles.css" />
-    <style>
-      /* General Styles */
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        color: #333;
-      }
-
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-
-      /* Header Styles */
-      .header {
-        margin-bottom: 30px;
-      }
-
-      .header h1 {
-        margin-bottom: 10px;
-      }
-
-      /* Search Styles */
-      .search-container {
-        margin-bottom: 20px;
-        position: relative;
-      }
-
-      .search-input-wrapper {
-        display: flex;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        overflow: hidden;
-      }
-
-      #search-input {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        outline: none;
-        font-size: 16px;
-      }
-
-      #search-button {
-        padding: 0 15px;
-        background: #f0f0f0;
-        border: none;
-        cursor: pointer;
-      }
-
-      #search-button:hover {
-        background: #e0e0e0;
-      }
-
-      .search-suggestions {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 1px solid #ccc;
-        border-top: none;
-        border-radius: 0 0 4px 4px;
-        z-index: 10;
-        max-height: 200px;
-        overflow-y: auto;
-        display: none;
-      }
-
-      .suggestion-item {
-        padding: 8px 10px;
-        cursor: pointer;
-      }
-
-      .suggestion-item:hover {
-        background: #f5f5f5;
-      }
-      /* Selected suggestion styling */
-      .suggestion-item.selected {
-        background-color: #e0e0e0;
-      }
-
-      /* Layout Styles */
-      .main-content {
-        display: flex;
-        flex-wrap: wrap;
-      }
-
-      .sidebar {
-        flex: 0 0 250px;
-        margin-right: 30px;
-      }
-
-      .content {
-        flex: 1;
-      }
-
-      .filter-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        font-family: "Helvetica-Condensed";
-        font-size: 15px;
-        color: #57585a;
-      }
-
-      .filter-list li {
-        margin-bottom: 8px;
-      }
-
-      .view-more-btn {
-        background: none;
-        border: none;
-        color: #0066cc;
-        cursor: pointer;
-        padding: 0;
-        font-size: 14px;
-        margin-top: 5px;
-      }
-
-      /* Cards Styles */
-      .communications-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-
-      .results-count {
-        font-size: 16px;
-      }
-
-      #communications-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
-      }
-
-      .communication-card {
-        border: 1px solid #e0e0e0;
-        border-radius: 4px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .card-image {
-        height: 180px;
-        overflow: hidden;
-      }
-
-      .card-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .card-content {
-        padding: 15px;
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-      }
-
-      .card-content h3 {
-        margin-top: 0;
-        margin-bottom: 10px;
-      }
-
-      .card-content h3 a {
-        color: #333;
-        text-decoration: none;
-      }
-
-      .card-metadata {
-        margin-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        color: #666;
-        font-size: 14px;
-      }
-
-      .card-tags {
-        margin-bottom: 10px;
-      }
-
-      .tag {
-        display: inline-block;
-        padding: 3px 8px;
-        margin-right: 5px;
-        border-radius: 3px;
-        font-size: 12px;
-      }
-
-      .product-category {
-        background-color: #e6f7ff;
-        color: #0066cc;
-      }
-
-      .topic {
-        background-color: #f6ffed;
-        color: #52c41a;
-      }
-
-      .card-type {
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        color: #666;
-      }
-
-      .card-type span {
-        margin-right: 5px;
-      }
-
-      .view-button {
-        display: inline-block;
-        padding: 8px 16px;
-        background-color: #0066cc;
-        color: white;
-        text-decoration: none;
-        border-radius: 4px;
-        text-align: center;
-        margin-top: auto;
-      }
-
-      .view-button:hover {
-        background-color: #0052a3;
-      }
-
-      /* Load More Button */
-      .load-more-container {
-        margin-top: 30px;
-        text-align: center;
-      }
-
-      .load-more {
-        padding: 10px 20px;
-        background-color: #f0f0f0;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-      }
-
-      .load-more:hover {
-        background-color: #e0e0e0;
-      }
-
-      /* No Results */
-      .no-results {
-        padding: 20px;
-        text-align: center;
-        color: #666;
-        grid-column: 1 / -1;
-      }
-
-      /* Icons */
-      .icon-search:before {
-        content: "🔍";
-      }
-
-      .icon-bulletin:before {
-        content: "📋";
-      }
-
-      .icon-rep_update:before {
-        content: "📢";
-      }
-
-      /* Responsive */
-      @media (max-width: 768px) {
-        .main-content {
-          flex-direction: column;
-        }
-
-        .sidebar {
-          flex: 0 0 100%;
-          margin-right: 0;
-          margin-bottom: 20px;
-        }
-
-        #communications-container {
-          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        }
-      }
-    </style>
+    <style></style>
   </head>
   <body>
     <div class="container">
-      <div class="header">
-        <h1>Communication Center</h1>
-        <p>Find bulletins, updates, and other communications related to our products</p>
+      <div class="page-title-border-bottom">
+        <h1 class="page-title">COMMUNICATIONS</h1>
+        <div class="sort-container">
+          <div class="view-toggle">
+            <button class="view-btn grid-view active"><i class="fas fa-th-large"></i></button>
+            <button class="view-btn list-view"><i class="fas fa-list-ul"></i></button>
+          </div>
+
+          <div class="sort-container">
+            <!-- <label for="sort-by">Sort by:</label> -->
+            <select id="sort-by">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="name-asc">Name (A-Z)</option>
+              <option value="name-desc">Name (Z-A)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="results-count">
+        Results: <span id="communication-count">0</span> Communications
       </div>
 
       <div class="main-content">
         <aside class="sidebar">
           <div id="search-container" class="search-container">
-            <div class="search-input-wrapper">
-              <input
-                type="text"
-                id="search-input"
-                placeholder="Search titles..."
-                aria-label="Search titles"
-              />
-              <button id="search-button" aria-label="Search">
-                <span class="icon-search" aria-hidden="true"></span>
-              </button>
-            </div>
-            <div class="search-suggestions" id="search-suggestions"></div>
+            <section class="filter-section" id="topics-section">
+              <h2>Filter by Keyword</h2>
+              <div class="search-input-wrapper">
+                <input
+                  type="text"
+                  id="search-input"
+                  placeholder="Search titles..."
+                  aria-label="Search titles"
+                />
+                <button id="search-button" aria-label="Search">
+                  <i class="fas fa-search" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="search-suggestions" id="search-suggestions"></div>
+            </section>
           </div>
           <div id="filters-container">
             <!-- Filter sections will be inserted here by JS -->
@@ -369,18 +102,14 @@
         </aside>
 
         <main class="content">
-          <div class="communications-header">
-            <div class="results-count">
-              Showing <span id="communication-count">0</span> communications
-            </div>
-          </div>
+          <div class="communications-header"></div>
 
           <div id="communications-container">
             <!-- Communication cards will be inserted here by JS -->
           </div>
 
           <div class="load-more-container">
-            <button class="load-more">LOAD MORE</button>
+            <button class="load-more prd-btn">LOAD MORE</button>
           </div>
         </main>
       </div>
