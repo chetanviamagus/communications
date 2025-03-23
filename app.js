@@ -1069,6 +1069,9 @@ class CommunicationApp {
 
     // Setup load more button
     this.setupLoadMoreButton();
+
+    // Setup view toggle buttons
+    this.setupViewToggle();
   }
 
   createSearchComponent() {
@@ -1149,6 +1152,28 @@ class CommunicationApp {
       this.loadMoreButton.addEventListener("click", () => {
         const isShowingAll = this.cardList.toggleShowAll();
         this.loadMoreButton.textContent = isShowingAll ? "SHOW LESS" : "LOAD MORE";
+        this.updateDisplay();
+      });
+    }
+  }
+
+  setupViewToggle() {
+    // View toggle buttons
+    const gridViewBtn = document.querySelector(".grid-view");
+    const listViewBtn = document.querySelector(".list-view");
+
+    if (gridViewBtn && listViewBtn && this.cardsContainer) {
+      gridViewBtn.addEventListener("click", () => {
+        gridViewBtn.classList.add("active");
+        listViewBtn.classList.remove("active");
+        this.cardsContainer.classList.remove("list-view");
+        this.updateDisplay();
+      });
+
+      listViewBtn.addEventListener("click", () => {
+        listViewBtn.classList.add("active");
+        gridViewBtn.classList.remove("active");
+        this.cardsContainer.classList.add("list-view");
         this.updateDisplay();
       });
     }
