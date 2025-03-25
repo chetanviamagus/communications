@@ -500,9 +500,9 @@ class CommunicationApp {
         url: "https://www.greenheck.com/products",
         date: "2025-03-27",
         issueNumber: "Issue #2",
-        productCategory: "Louvers",
-        topic: "Diffusers",
-        communication: "Bulletin"
+        productCategory: "Louvers" /*Indentifier, not visual mapping*/,
+        topic: "Diffusers" /*Array of strings*/,
+        communication: "Bulletin" /*Rename to communicationType*/
       },
       {
         id: "2",
