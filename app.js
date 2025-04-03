@@ -181,7 +181,7 @@ class FilterComponent {
             ${this.options
               .map(
                 (option, index) => `
-              <li ${index >= this.initialVisibleCount ? `class="hidden-option ${filterId}-hidden" style="display: none;"` : "flex"}>
+              <li ${index >= this.initialVisibleCount ? `class="hidden-option ${filterId}-hidden" style="display: none;"` : 'class="flex"'}>
                 <input type="checkbox" id="${option.toLowerCase().replace(/\s+/g, "-")}" name="${filterId}">
                 <label for="${option.toLowerCase().replace(/\s+/g, "-")}">${option}</label>
               </li>
