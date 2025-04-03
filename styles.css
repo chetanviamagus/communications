@@ -652,3 +652,24 @@ main {
 .version-changes li {
   margin-bottom: 5px;
 }
+/* Container width classes for responsive breakpoints */
+.gh-container-xl {
+  margin: 0 auto;
+  max-width: 1248px !important;
+  width: 100% !important;
+}
+
+@media (max-width: 1248px) {
+  .gh-container-lg {
+    max-width: 735px !important;
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 735px) {
+  .gh-container-xs {
+    max-width: 332px !important;
+    width: 100% !important;
+    padding: 0 15px !important;
+  }
+}
