@@ -1,19 +1,19 @@
 // Search index service - responsible for indexing and searching data
 class SearchIndexService {
-  constructor(data) {
+  constructor(data, indexSummary = false) {
     this.data = data;
     this.titleIndex = new Map();
+    this.summaryIndex = new Map();
+    this.indexSummary = indexSummary;
     this.indexData();
   }
 
   indexData() {
     // Create an index of words to items for faster search
     this.data.forEach(item => {
-      // Tokenize the title into words
-      const words = item.title.toLowerCase().split(/\s+/);
-
-      // Add each word to the index
-      words.forEach(word => {
+      // Index title
+      const titleWords = item.title.toLowerCase().split(/\s+/);
+      titleWords.forEach(word => {
         if (!this.titleIndex.has(word)) {
           this.titleIndex.set(word, []);
         }
@@ -21,6 +21,19 @@ class SearchIndexService {
           this.titleIndex.get(word).push(item);
         }
       });
+
+      // Index summary if enabled and it exists
+      if (this.indexSummary && item.summary) {
+        const summaryWords = item.summary.toLowerCase().split(/\s+/);
+        summaryWords.forEach(word => {
+          if (!this.summaryIndex.has(word)) {
+            this.summaryIndex.set(word, []);
+          }
+          if (!this.summaryIndex.get(word).includes(item)) {
+            this.summaryIndex.get(word).push(item);
+          }
+        });
+      }
     });
   }
 
@@ -30,24 +43,25 @@ class SearchIndexService {
     }
 
     const searchTerm = query.toLowerCase().trim();
+    const results = new Set();
 
-    // Get exact matches
-    const exactMatches = this.titleIndex.get(searchTerm) || [];
-
-    // Get suggestions (words that start with the search term)
-    const suggestions = [];
+    // Search in titles
     this.titleIndex.forEach((items, word) => {
-      if (word.startsWith(searchTerm) && word !== searchTerm) {
-        items.forEach(item => {
-          if (!suggestions.includes(item) && !exactMatches.includes(item)) {
-            suggestions.push(item);
-          }
-        });
+      if (word.includes(searchTerm)) {
+        items.forEach(item => results.add(item));
       }
     });
 
-    // Combine exact matches and suggestions
-    return [...exactMatches, ...suggestions];
+    // Search in summaries if enabled
+    if (this.indexSummary) {
+      this.summaryIndex.forEach((items, word) => {
+        if (word.includes(searchTerm)) {
+          items.forEach(item => results.add(item));
+        }
+      });
+    }
+
+    return Array.from(results);
   }
 
   getSuggestions(prefix, limit = 5) {
@@ -58,12 +72,21 @@ class SearchIndexService {
     const searchTerm = prefix.toLowerCase().trim();
     const suggestions = new Set();
 
-    // Find words that start with the prefix
+    // Get title suggestions
     this.titleIndex.forEach((_, word) => {
       if (word.startsWith(searchTerm)) {
         suggestions.add(word);
       }
     });
+
+    // Get summary suggestions if enabled
+    if (this.indexSummary) {
+      this.summaryIndex.forEach((_, word) => {
+        if (word.startsWith(searchTerm)) {
+          suggestions.add(word);
+        }
+      });
+    }
 
     // Convert set to array, sort alphabetically and limit results
     return Array.from(suggestions).sort().slice(0, limit);
@@ -85,6 +108,16 @@ class CommunicationDataService {
   }
 
   getUniqueValues(property) {
+    // Handle array properties
+    if (property === "topic" || property === "productCategory") {
+      const allValues = new Set();
+      this.data.forEach(item => {
+        if (Array.isArray(item[property])) {
+          item[property].forEach(value => allValues.add(value));
+        }
+      });
+      return Array.from(allValues);
+    }
     return [...new Set(this.data.map(item => item[property]))];
   }
 
@@ -142,8 +175,13 @@ class CommunicationDataService {
               itemProperty = item.productCategory;
               break;
             case "communication-type":
-              itemProperty = item.communication;
+              itemProperty = item.communicationType;
               break;
+          }
+
+          // Handle array properties
+          if (Array.isArray(itemProperty)) {
+            return selectedValues.some(value => itemProperty.includes(value));
           }
 
           // Check if the item's property is in the selected values
@@ -164,7 +202,7 @@ class CommunicationDataService {
 class FilterComponent {
   constructor(filterType, options, container, changeCallback) {
     this.filterType = filterType;
-    this.options = options;
+    this.options = options || []; // Ensure options is at least an empty array
     this.container = container;
     this.changeCallback = changeCallback;
     this.initialVisibleCount = 2;
@@ -179,11 +217,12 @@ class FilterComponent {
           <h2>${this.filterType}</h2>
           <ul class="filter-list" role="group" aria-label="${this.filterType} filters">
             ${this.options
+              .filter(option => option) // Filter out any undefined/null options
               .map(
                 (option, index) => `
               <li ${index >= this.initialVisibleCount ? `class="hidden-option ${filterId}-hidden" style="display: none;"` : 'class="flex"'}>
-                <input type="checkbox" id="${option.toLowerCase().replace(/\s+/g, "-")}" name="${filterId}">
-                <label for="${option.toLowerCase().replace(/\s+/g, "-")}">${option}</label>
+                <input type="checkbox" id="${String(option).toLowerCase().replace(/\s+/g, "-")}" name="${filterId}">
+                <label for="${String(option).toLowerCase().replace(/\s+/g, "-")}">${option}</label>
               </li>
             `
               )
@@ -393,8 +432,116 @@ class CardListComponent {
     this.isShowingAll = false;
   }
 
+  getIconPath(communicationType) {
+    switch (communicationType.toLowerCase()) {
+      case "bulletin":
+        return "./imgs/bulletin-icon.svg";
+      case "caps update":
+        return "./imgs/caps-update-icon.svg";
+      case "insights":
+        return "./imgs/insights-icon.svg";
+      case "rep update":
+        return "./imgs/rep-update-icon.svg";
+      default:
+        return "./imgs/bulletin-icon.svg"; // Default icon for unknown types
+    }
+  }
+
+  convertToISO(dateString) {
+    // If it's already in ISO format, return as is
+    if (dateString.match(/^\d{4}-\d{2}-\d{2}/)) {
+      return dateString;
+    }
+
+    // Try different date formats
+    const formats = [
+      // Month Day, Year (e.g., "February 5, 2025")
+      /^([A-Za-z]+)\s+(\d{1,2}),\s+(\d{4})$/,
+      // Day Month Year (e.g., "5 February 2025")
+      /^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/,
+      // MM/DD/YYYY or DD/MM/YYYY
+      /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/,
+      // YYYY/MM/DD
+      /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/
+    ];
+
+    for (const format of formats) {
+      const match = dateString.match(format);
+      if (match) {
+        let year, month, day;
+
+        if (format === formats[0]) {
+          // Month Day, Year
+          const monthNames = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+          ];
+          month = (monthNames.indexOf(match[1]) + 1).toString().padStart(2, "0");
+          day = match[2].padStart(2, "0");
+          year = match[3];
+        } else if (format === formats[1]) {
+          // Day Month Year
+          const monthNames = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+          ];
+          month = (monthNames.indexOf(match[2]) + 1).toString().padStart(2, "0");
+          day = match[1].padStart(2, "0");
+          year = match[3];
+        } else if (format === formats[2]) {
+          // MM/DD/YYYY or DD/MM/YYYY
+          // Try both formats
+          const date = new Date(dateString);
+          if (!isNaN(date.getTime())) {
+            year = date.getFullYear();
+            month = (date.getMonth() + 1).toString().padStart(2, "0");
+            day = date.getDate().toString().padStart(2, "0");
+          } else {
+            continue;
+          }
+        } else if (format === formats[3]) {
+          // YYYY/MM/DD
+          year = match[1];
+          month = match[2].padStart(2, "0");
+          day = match[3].padStart(2, "0");
+        }
+
+        return `${year}-${month}-${day}`;
+      }
+    }
+
+    // If no format matches, return the original string
+    return dateString;
+  }
+
   formatDate(dateString) {
-    const date = new Date(dateString);
+    const isoDate = this.convertToISO(dateString);
+    const date = new Date(isoDate);
+
+    if (isNaN(date.getTime())) {
+      return dateString; // Return original if conversion failed
+    }
+
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -426,32 +573,32 @@ class CardListComponent {
         item => `
         <article
           class="product-card"
-          data-id="${item.id}"
-          data-topic="${item.topic}"
-          data-product-category="${item.productCategory}"
-          data-communication="${item.communication}"
+          data-id="${item.id || ""}"
+          data-topic="${Array.isArray(item.topic) ? item.topic.join(",") : item.topic}"
+          data-product-category="${Array.isArray(item.productCategory) ? item.productCategory.join(",") : item.productCategory}"
+          data-communication="${item.communicationType}"
         >
           <div class="product-image">
             <img src="${item.imageUrl}" alt="${item.title}" loading="lazy" />
           </div>
           <div class="product-info">
-          <h3 class="product-title">${item.title}</h3>
+            <h3 class="product-title">${item.title}</h3>
             <div class="product-meta-body">
               <div class="product-meta-info">
                 <time datetime="${item.date}">${this.formatDate(item.date)}</time>,
                 <span class="issue-number">${item.issueNumber}</span>
               </div>
               <div class="product-category-info">
-                <span>${item.productCategory}</span> |
-                <span>${item.topic}</span>
+                <span>${Array.isArray(item.productCategory) ? item.productCategory.join(", ") : item.productCategory}</span> |
+                <span>${Array.isArray(item.topic) ? item.topic.join(", ") : item.topic}</span>
               </div>
             </div>
             <div class="product-footer">
-                <div class="product-meta">
-                    <img src="./imgs/${item.communication.toLowerCase()}-icon.svg" alt="CAPS Update icon" class="communication-icon">
-                    <span class="communication-type">${item.communication}</span>
-                </div>
-                <a href="${item.url}" class="prd-btn" aria-label="View ${item.title}"> VIEW </a>
+              <div class="product-meta">
+                <img src="${this.getIconPath(item.communicationType)}" alt="${item.communicationType} icon" class="communication-icon">
+                <span class="communication-type">${item.communicationType}</span>
+              </div>
+              <a href="${item.url}" class="prd-btn" aria-label="View ${item.title}"> VIEW </a>
             </div>
           </div>
         </article>
@@ -494,554 +641,424 @@ class CommunicationApp {
     // Data array is initialized here
     this.data = [
       {
-        id: "1",
-        title: "Models Sp-A50-90VG and SP A90-130-VG Production Pause",
-        imageUrl: "https://picsum.photos/400/300?1",
-        url: "https://www.greenheck.com/products",
-        date: "2025-03-27",
-        issueNumber: "Issue #2",
-        productCategory: "Louvers" /*Indentifier, not visual mapping*/,
-        topic: "Diffusers" /*Array of strings*/,
-        communication: "Bulletin" /*Rename to communicationType*/
+        title: "Consulting-Specifying Engineer Product of the Year: AFL-601 Nomination",
+        communicationType: "Bulletin",
+        summary:
+          "The AFL-601 Wind-Driven Rain FEMA Louver is a nominee for the Consulting-Specifying Engineer (CSE) Product of the Year awards in the HVAC category—and we need your vote to win!",
+        issueNumber: "Issue# 1",
+        AuthorName: "John Smith",
+        date: "February 5, 2025",
+        url: "https://cms-test.greenheck.com/resources/communications/consulting-specifying-engineer-product-of-the-year--afl-601-nomination",
+        topic: ["Industry Awards", "Product Recognition"],
+        productCategory: ["AFL-601", "Louvers"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["FEMA", "HVAC", "Awards"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
       },
       {
-        id: "2",
-        title: "Energy Recovery Ventilators: Enhancing Indoor Air Quality",
-        imageUrl: "https://picsum.photos/400/300?2",
-        url: "https://www.greenheck.com/products/air-conditioning/energy-recovery-ventilators",
-        date: "2025-03-15",
-        issueNumber: "Issue #3",
-        productCategory: "Energy Recovery Ventilators",
-        topic: "Indoor Air Quality",
-        communication: "Insights"
+        title: "New Energy Recovery Ventilator Series Launch",
+        communicationType: "CAPS Update",
+        summary:
+          "Introducing our new line of Energy Recovery Ventilators featuring advanced heat exchange technology and improved energy efficiency ratings.",
+        issueNumber: "Issue# 2",
+        AuthorName: "Sarah Johnson",
+        date: "March 15, 2025",
+        url: "https://cms-test.greenheck.com/resources/communications/new-energy-recovery-ventilator-series",
+        topic: ["Product Innovation", "Energy Solutions"],
+        productCategory: ["ERV", "Ventilation Systems"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["HVAC", "Sustainability", "Innovation"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "3",
-        title: "Understanding Fan Energy Index (FEI) Standards",
-        imageUrl: "https://picsum.photos/400/300?3",
-        url: "https://www.greenheck.com/resources/education/fei",
-        date: "2025-03-10",
-        issueNumber: "Issue #4",
-        productCategory: "Fans",
-        topic: "Fan Energy Index",
-        communication: "Bulletin"
+        title: "Technical Bulletin: Fan Performance Optimization",
+        communicationType: "Technical Update",
+        summary:
+          "Latest findings on fan performance optimization techniques and best practices for installation and maintenance.",
+        issueNumber: "Issue# 3",
+        AuthorName: "Michael Chen",
+        date: "April 1, 2025",
+        url: "https://cms-test.greenheck.com/resources/communications/fan-performance-optimization",
+        topic: ["Technical Research", "System Optimization"],
+        productCategory: ["Fans", "Performance Equipment"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Technical", "Performance", "Maintenance"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
       },
       {
-        id: "4",
-        title: "Fire and Smoke Dampers: Safety Measures in HVAC Systems",
-        imageUrl: "https://picsum.photos/400/300?4",
-        url: "https://www.greenheck.com/products/air-control/dampers/fire-smoke-dampers",
-        date: "2025-03- 5",
-        issueNumber: "Issue #5",
-        productCategory: "Dampers",
-        topic: "Fire and Smoke Dampers",
-        communication: "Rep Update"
+        title: "Industry Standards Update: ASHRAE 2025",
+        communicationType: "REP Update",
+        summary:
+          "Overview of the latest ASHRAE standards and how they impact HVAC system design and implementation.",
+        issueNumber: "Issue# 4",
+        AuthorName: "Emily Rodriguez",
+        date: "May 10, 2025",
+        url: "https://cms-test.greenheck.com/resources/communications/ashrae-2025-update",
+        topic: ["Industry Standards", "Regulatory Updates"],
+        productCategory: ["Compliance Systems", "Standards Implementation"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["ASHRAE", "Standards", "Compliance"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "5",
-        title: "Ventilation Strategies for Modern Buildings",
-        imageUrl: "https://picsum.photos/400/300?5",
-        url: "https://www.greenheck.com/resources/education/ventilation-strategies",
-        date: "2025-03-20",
-        issueNumber: "Issue #6",
-        productCategory: "Dedicated Outdoor Air Systems (DOAS)",
-        topic: "Ventilation Strategies",
-        communication: "Insights"
+        title: "Customer Success Story: Hospital Ventilation Upgrade",
+        communicationType: "Insights",
+        summary:
+          "How our ventilation solutions helped a major hospital improve indoor air quality and energy efficiency.",
+        issueNumber: "Issue# 5",
+        AuthorName: "David Wilson",
+        date: "June 20, 2025",
+        url: "https://cms-test.greenheck.com/resources/communications/hospital-ventilation-case-study",
+        topic: ["Customer Success", "Healthcare Solutions"],
+        productCategory: ["Healthcare Systems", "Ventilation Solutions"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Healthcare", "Case Study", "IAQ"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
       },
       {
-        id: "6",
-        title: "System Balancing: Ensuring Optimal HVAC Performance",
-        imageUrl: "https://picsum.photos/400/300?6",
-        url: "https://www.greenheck.com/resources/education/system-balancing",
-        date: "2025-03-15",
-        issueNumber: "Issue #7",
-        productCategory: "Airflow Measurement",
-        topic: "System Balancing",
-        communication: "Bulletin"
+        title: "New Product Line: Commercial Kitchen Ventilation",
+        communicationType: "CAPS Update",
+        summary:
+          "Introducing our latest commercial kitchen ventilation solutions with enhanced capture efficiency and reduced energy consumption.",
+        issueNumber: "Issue# 6",
+        AuthorName: "Robert Taylor",
+        date: "July 5, 2025",
+        url: "https://cms-test.greenheck.com/resources/communications/commercial-kitchen-ventilation",
+        topic: ["Product Launch", "Commercial Solutions"],
+        productCategory: ["Kitchen Systems", "Commercial Ventilation"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Commercial", "Kitchen", "Ventilation"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "7",
-        title: "Sound and Vibration Control in HVAC Systems",
-        imageUrl: "https://picsum.photos/400/300?7",
-        url: "https://www.greenheck.com/resources/education/sound-vibration-control",
-        date: "2025-03-10",
-        issueNumber: "Issue #8",
-        productCategory: "Fans",
-        topic: "Sound and Vibration Control",
-        communication: "Rep Update"
+        title: "Energy Efficiency Webinar Series",
+        communicationType: "Insights",
+        summary:
+          "Join our upcoming webinar series focusing on energy efficiency in HVAC systems and learn about the latest technologies and best practices.",
+        issueNumber: "Issue# 7",
+        AuthorName: "Lisa Anderson",
+        date: "August 12, 2025",
+        url: "https://cms-test.greenheck.com/resources/communications/energy-efficiency-webinar",
+        topic: ["Educational Events", "Industry Training"],
+        productCategory: ["Training Programs"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Webinar", "Energy", "Education"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
       },
       {
-        id: "8",
-        title: "Codes & Standards: Staying Compliant in HVAC Installations",
-        imageUrl: "https://picsum.photos/400/300?8",
-        url: "https://www.greenheck.com/resources/education/codes-standards",
-        date: "2025-03- 5",
-        issueNumber: "Issue #9",
-        productCategory: "Louvers",
-        topic: "Codes & Standards",
-        communication: "Insights"
+        title: "Technical Service Bulletin: Fan Motor Maintenance",
+        communicationType: "Technical Update",
+        summary:
+          "Important updates regarding fan motor maintenance procedures and recommended service intervals for optimal performance.",
+        issueNumber: "Issue# 8",
+        AuthorName: "James Wilson",
+        date: "September 3, 2025",
+        url: "https://cms-test.greenheck.com/resources/communications/fan-motor-maintenance",
+        topic: ["Technical Support", "Maintenance Guidelines"],
+        productCategory: ["Fan Motors", "Maintenance Parts"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Technical", "Maintenance", "Motors"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "9",
-        title: "Greenheck-India: Advancements in Air Control Products",
-        imageUrl: "https://picsum.photos/400/300?9",
-        url: "https://www.greenheck.com/products/greenheck-india",
-        date: "2025-03- 1",
-        issueNumber: "Issue #10",
-        productCategory: "Greenheck-India",
-        topic: "Air Control Products",
-        communication: "Bulletin"
+        title: "Case Study: University Campus Ventilation Upgrade",
+        communicationType: "Insights",
+        summary:
+          "How our ventilation solutions transformed the indoor air quality and energy efficiency of a major university campus.",
+        issueNumber: "Issue# 9",
+        AuthorName: "Patricia Lee",
+        date: "October 15, 2025",
+        url: "https://cms-test.greenheck.com/resources/communications/university-ventilation-case-study",
+        topic: ["Educational Facilities", "Sustainability Projects"],
+        productCategory: ["Campus Systems", "Educational Ventilation"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Education", "Case Study", "IAQ"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
       },
       {
-        id: "10",
-        title: "Grilles, Registers & Diffusers: Enhancing Air Distribution",
-        imageUrl: "https://picsum.photos/400/300?10",
-        url: "https://www.greenheck.com/products/air-distribution/grd",
-        date: "2025-03-25",
-        issueNumber: "Issue #11",
-        productCategory: "Grilles, Registers & Diffusers",
-        topic: "Air Distribution",
-        communication: "Rep Update"
+        title: "New Product: High-Efficiency Air Terminal Units",
+        communicationType: "CAPS Update",
+        summary:
+          "Introducing our new line of high-efficiency air terminal units with advanced control capabilities and improved energy performance.",
+        issueNumber: "Issue# 10",
+        AuthorName: "Thomas Brown",
+        date: "November 7, 2025",
+        url: "https://cms-test.greenheck.com/resources/communications/high-efficiency-air-terminal-units",
+        topic: ["Product Innovation", "Energy Solutions"],
+        productCategory: ["Air Terminal Units", "Control Systems"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["ATU", "Efficiency", "Controls"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "11",
-        title: "Air Terminal Units: Precision in Airflow Control",
-        imageUrl: "https://picsum.photos/400/300?11",
-        url: "https://www.greenheck.com/products/air-distribution/air-terminal-units",
-        date: "2025-03-10",
-        issueNumber: "Issue #12",
-        productCategory: "Air Terminal Units",
-        topic: "System Balancing",
-        communication: "Insights"
+        title: "Technical Bulletin: Fire and Smoke Damper Testing",
+        communicationType: "Technical Update",
+        summary:
+          "Updated procedures and requirements for fire and smoke damper testing in accordance with the latest NFPA standards.",
+        issueNumber: "Issue# 11",
+        AuthorName: "Richard Martinez",
+        date: "December 1, 2025",
+        url: "https://cms-test.greenheck.com/resources/communications/fire-smoke-damper-testing",
+        topic: ["Safety"],
+        productCategory: ["Fire Dampers", "Smoke Dampers"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Fire", "Safety", "Testing"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "12",
-        title: "Make-Up Air Units: Maintaining Building Pressurization",
-        imageUrl: "https://picsum.photos/400/300?12",
-        url: "https://www.greenheck.com/products/air-conditioning/make-up-air-units",
-        date: "2025-03-25",
-        issueNumber: "Issue #13",
-        productCategory: "Greenheck-IndiaMake-Up Air Units",
-        topic: "Ventilation Strategies",
-        communication: "Bulletin"
+        title: "Product Recall Notice: Model XYZ-123 Fans",
+        communicationType: "Safety Alert",
+        summary:
+          "Important safety notice regarding a specific batch of Model XYZ-123 fans. Please review the details and take appropriate action.",
+        issueNumber: "Issue# 12",
+        AuthorName: "Safety Department",
+        date: "January 10, 2026",
+        url: "https://cms-test.greenheck.com/resources/communications/xyz-123-recall",
+        topic: ["Recall"],
+        productCategory: ["Fans", "Safety Gear"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Safety", "Recall", "Fans"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "13",
-        title: "Model GB-7 Belt Drive Centrifugal Roof Exhaust Fan",
-        imageUrl: "https://picsum.photos/400/300?13",
-        url: "https://www.greenheck.com/shop/browse-by-product-model/centrifugal-exhaust-fans/gb/gb-7",
-        date: "2025-03-13",
-        issueNumber: "Issue #13",
-        productCategory: "Fans",
-        topic: "Ventilation Strategies",
-        communication: "Bulletin"
+        title: "New Distribution Center Opening",
+        communicationType: "Company News",
+        summary:
+          "Announcing the opening of our new distribution center in the Midwest, improving service and delivery times for our customers.",
+        issueNumber: "Issue# 13",
+        AuthorName: "Corporate Communications",
+        date: "February 15, 2026",
+        url: "https://cms-test.greenheck.com/resources/communications/new-distribution-center",
+        topic: ["Company News", "Facilities"],
+        productCategory: ["Company", "Operations"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Facilities", "Operations", "Company"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "14",
-        title: "SP and CSP Ceiling Exhaust Fans",
-        imageUrl: "https://picsum.photos/400/300?14",
-        url: "https://content.greenheck.com/public/DAMProd/Original/10002/SPCSP_catalog.pdf",
-        date: "2025-03-14",
-        issueNumber: "Issue #14",
-        productCategory: "Fans",
-        topic: "Indoor Air Quality",
-        communication: "Insights"
+        title: "Technical Service Bulletin: Control System Update",
+        communicationType: "Technical Update",
+        summary:
+          "Important update regarding our control systems software and recommended upgrade procedures for optimal performance.",
+        issueNumber: "Issue# 14",
+        AuthorName: "Technical Services",
+        date: "March 5, 2026",
+        url: "https://cms-test.greenheck.com/resources/communications/control-system-update",
+        topic: ["Controls"],
+        productCategory: ["Software"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Controls", "Software", "Update"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "15",
-        title: "Inline Fans for Industrial Applications",
-        imageUrl: "https://picsum.photos/400/300?15",
-        url: "https://www.greenheck.com/products/air-movement/fans",
-        date: "2025-03-15",
-        issueNumber: "Issue #15",
-        productCategory: "Fans",
-        topic: "System Balancing",
-        communication: "Rep Update"
+        title: "Case Study: Data Center Cooling Solution",
+        communicationType: "Case Study",
+        summary:
+          "How our innovative cooling solutions helped a major data center achieve optimal temperature control and energy efficiency.",
+        issueNumber: "Issue# 15",
+        AuthorName: "Technical Solutions Team",
+        date: "April 20, 2026",
+        url: "https://cms-test.greenheck.com/resources/communications/data-center-cooling",
+        topic: ["Case Study", "Data Center"],
+        productCategory: ["Cooling", "Software"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Data Center", "Cooling", "Case Study"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "16",
-        title: "Overhead HVLS Fans for Large Spaces",
-        imageUrl: "https://picsum.photos/400/300?16",
-        url: "https://www.greenheck.com/products/air-movement/fans",
-        date: "2025-03-16",
-        issueNumber: "Issue #16",
-        productCategory: "Fans",
-        topic: "Energy Recovery Systems",
-        communication: "Bulletin"
+        title: "New Product: Smart Ventilation Controls",
+        communicationType: "Product Update",
+        summary:
+          "Introducing our new line of smart ventilation controls with IoT integration and advanced monitoring capabilities.",
+        issueNumber: "Issue# 16",
+        AuthorName: "Product Development Team",
+        date: "May 8, 2026",
+        url: "https://cms-test.greenheck.com/resources/communications/smart-ventilation-controls",
+        topic: ["Product Launch", "IoT"],
+        productCategory: ["Ventilation"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["IoT", "Smart Controls", "Ventilation"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "17",
-        title: "Directional Destratification Fans",
-        imageUrl: "https://picsum.photos/400/300?17",
-        url: "https://www.greenheck.com/products/air-movement/fans",
-        date: "2025-03-17",
-        issueNumber: "Issue #17",
-        productCategory: "Fans",
-        topic: "Ventilation Strategies",
-        communication: "CAPS Update"
+        title: "Technical Bulletin: Air Quality Monitoring",
+        communicationType: "Technical Update",
+        summary:
+          "Updated guidelines for air quality monitoring in commercial buildings and best practices for maintaining optimal indoor air quality.",
+        issueNumber: "Issue# 17",
+        AuthorName: "Technical Services",
+        date: "June 15, 2026",
+        url: "https://cms-test.greenheck.com/resources/communications/air-quality-monitoring",
+        topic: ["Technical", "Air Quality"],
+        productCategory: ["Monitoring", "Ventilation"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["IAQ", "Monitoring", "Technical"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "18",
-        title: "Wall Mounted Fans for Exhaust Applications",
-        imageUrl: "https://picsum.photos/400/300?18",
-        url: "https://www.greenheck.com/products/air-movement/fans",
-        date: "2025-03-18",
-        issueNumber: "Issue #18",
-        productCategory: "Fans",
-        topic: "Fire and Smoke Dampers",
-        communication: "Insights"
+        title: "Case Study: Office Building",
+        communicationType: "Case Study",
+        summary:
+          "How our ventilation solutions improved indoor air quality and energy efficiency in a modern office building.",
+        issueNumber: "Issue# 48",
+        AuthorName: "Commercial Solutions Team",
+        date: "January 22, 2029",
+        url: "https://cms-test.greenheck.com/resources/communications/office-building",
+        topic: ["Technical", "Commissioning"],
+        productCategory: ["Performance"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Office", "Ventilation", "Case Study"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "19",
-        title: "Blowers for High-Pressure Air Movement",
-        imageUrl: "https://picsum.photos/400/300?19",
-        url: "https://www.greenheck.com/products/air-movement/fans",
-        date: "2025-03-19",
-        issueNumber: "Issue #19",
-        productCategory: "Fans",
-        topic: "Sound and Vibration Control",
-        communication: "Bulletin"
+        title: "New Product: Energy Recovery Ventilators",
+        communicationType: "Product Update",
+        summary:
+          "Introducing our new line of energy recovery ventilators with enhanced heat exchange efficiency and reduced energy consumption.",
+        issueNumber: "Issue# 49",
+        AuthorName: "Product Development Team",
+        date: "February 10, 2029",
+        url: "https://cms-test.greenheck.com/resources/communications/energy-recovery-ventilators",
+        topic: ["Case Study", "Commercial"],
+        productCategory: ["Ventilation", "Performance"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Energy", "Recovery", "Ventilation"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       },
       {
-        id: "20",
-        title: "Axial Condenser Fans for HVAC Systems",
-        imageUrl: "https://picsum.photos/400/300?20",
-        url: "https://www.greenheck.com/products/air-movement/fans",
-        date: "2025-03-20",
-        issueNumber: "Issue #20",
-        productCategory: "Fans",
-        topic: "Codes & Standards",
-        communication: "Rep Update"
-      },
-      {
-        id: "21",
-        title: "Jet Fans for Parking Garage Ventilation",
-        imageUrl: "https://picsum.photos/400/300?21",
-        url: "https://www.greenheck.com/products/air-movement/fans",
-        date: "2025-03-21",
-        issueNumber: "Issue #21",
-        productCategory: "Fans",
-        topic: "Ventilation Strategies",
-        communication: "CAPS Update"
-      },
-      {
-        id: "22",
-        title: "Ceiling Exhaust Fans for Quiet Operation",
-        imageUrl: "https://picsum.photos/400/300?22",
-        url: "https://www.greenheck.com/products/air-movement/fans",
-        date: "2025-03-22",
-        issueNumber: "Issue #22",
-        productCategory: "Fans",
-        topic: "Indoor Air Quality",
-        communication: "Insights"
-      },
-      {
-        id: "23",
-        title: "Laboratory Exhaust Fans for Safety",
-        imageUrl: "https://picsum.photos/400/300?23",
-        url: "https://www.greenheck.com/products/air-movement/fans",
-        date: "2025-03-23",
-        issueNumber: "Issue #23",
-        productCategory: "Fans",
-        topic: "Fire and Smoke Dampers",
-        communication: "Bulletin"
-      },
-      {
-        id: "24",
-        title: "Fume Exhaust Fans for Corrosive Environments",
-        imageUrl: "https://picsum.photos/400/300?24",
-        url: "https://www.greenheck.com/products/air-movement/fans",
-        date: "2025-03-24",
-        issueNumber: "Issue #24",
-        productCategory: "Fans",
-        topic: "Indoor Air Quality",
-        communication: "Rep Update"
-      },
-      {
-        id: "25",
-        title: "Plenum Fans for HVAC Systems",
-        imageUrl: "https://picsum.photos/400/300?25",
-        url: "https://www.greenheck.com/products/air-movement/fans",
-        date: "2025-03-25",
-        issueNumber: "Issue #25",
-        productCategory: "Fans",
-        topic: "System Balancing",
-        communication: "CAPS Update"
-      },
-      {
-        id: "26",
-        title: "Fan Arrays for Redundancy and Efficiency",
-        imageUrl: "https://picsum.photos/400/300?26",
-        url: "https://www.greenheck.com/products/air-movement/fans",
-        date: "2025-03-26",
-        issueNumber: "Issue #26",
-        productCategory: "Fans",
-        topic: "Energy Recovery Systems",
-        communication: "Bulletin"
-      },
-      {
-        id: "27",
-        title: "Energy Recovery Ventilators for Efficient Ventilation",
-        imageUrl: "https://picsum.photos/400/300?27",
-        url: "https://www.greenheck.com/products/energy-recovery-ventilators",
-        date: "2025-03-27",
-        issueNumber: "Issue #27",
-        productCategory: "Energy Recovery Ventilators",
-        topic: "Energy Recovery Systems",
-        communication: "Insights"
-      },
-      {
-        id: "28",
-        title: "Louvers for Enhanced Airflow and Protection",
-        imageUrl: "https://picsum.photos/400/300?28",
-        url: "https://www.greenheck.com/products/air-control/louvers",
-        date: "2025-03-28",
-        issueNumber: "Issue #28",
-        productCategory: "Louvers",
-        topic: "Ventilation Strategies",
-        communication: "Rep Update"
-      },
-      {
-        id: "29",
-        title: "Dampers for Precise Airflow Control",
-        imageUrl: "https://picsum.photos/400/300?29",
-        url: "https://www.greenheck.com/products/air-control/dampers",
-        date: "2025-03-29",
-        issueNumber: "Issue #29",
-        productCategory: "Dampers",
-        topic: "System Balancing",
-        communication: "CAPS Update"
-      },
-      {
-        id: "30",
-        title: "Grilles and Registers for Aesthetic Air Distribution",
-        imageUrl: "https://picsum.photos/400/300?30",
-        url: "https://www.greenheck.com/products/air-distribution/grilles-registers-diffusers",
-        date: "2025-03-30",
-        issueNumber: "Issue #30",
-        productCategory: "Grilles, Registers & Diffusers",
-        topic: "Indoor Air Quality",
-        communication: "Bulletin"
-      },
-      {
-        id: "31",
-        title: "Air Terminal Units for Zonal Temperature Control",
-        imageUrl: "https://picsum.photos/400/300?31",
-        url: "https://www.greenheck.com/products/air-distribution/air-terminal-units",
-        date: "2025-03-31",
-        issueNumber: "Issue #31",
-        productCategory: "Air Terminal Units",
-        topic: "Codes & Standards",
-        communication: "Insights"
-      },
-      {
-        id: "32",
-        title: "Make-Up Air Units for Balanced Ventilation",
-        imageUrl: "https://picsum.photos/400/300?32",
-        url: "https://www.greenheck.com/products/air-conditioning/make-up-air",
-        date: "2025-03- 1",
-        issueNumber: "Issue #32",
-        productCategory: "Make-Up Air Units",
-        topic: "Ventilation Strategies",
-        communication: "Rep Update"
-      },
-      {
-        id: "33",
-        title: "Dedicated Outdoor Air Systems for Fresh Air Supply",
-        imageUrl: "https://picsum.photos/400/300?33",
-        url: "https://www.greenheck.com/products/air-conditioning/dedicated-outdoor-air-systems",
-        date: "2025-03- 2",
-        issueNumber: "Issue #33",
-        productCategory: "Dedicated Outdoor Air Systems (DOAS)",
-        topic: "Indoor Air Quality",
-        communication: "CAPS Update"
-      },
-      {
-        id: "34",
-        title: "Duct Heaters for Efficient Air Heating",
-        imageUrl: "https://picsum.photos/400/300?34",
-        url: "https://www.greenheck.com/products/air-conditioning/duct-heaters",
-        date: "2025-03- 3",
-        issueNumber: "Issue #34",
-        productCategory: "Duct Heaters",
-        topic: "Codes & Standards",
-        communication: "Bulletin"
-      },
-      {
-        id: "35",
-        title: "Gravity Ventilators for Passive Airflow",
-        imageUrl: "https://picsum.photos/400/300?35",
-        url: "https://www.greenheck.com/products/air-control/gravity-ventilators",
-        date: "2025-03- 4",
-        issueNumber: "Issue #35",
-        productCategory: "Gravity Ventilators",
-        topic: "Ventilation Strategies",
-        communication: "Insights"
-      },
-      {
-        id: "36",
-        title: "Airflow Measurement Devices for Accurate Monitoring",
-        imageUrl: "https://picsum.photos/400/300?36",
-        url: "https://www.greenheck.com/products/controls/airflow-measurement",
-        date: "2025-03- 5",
-        issueNumber: "Issue #36",
-        productCategory: "Airflow Measurement",
-        topic: "System Balancing",
-        communication: "Rep Update"
-      },
-      {
-        id: "37",
-        title: "Curbs and Mounting Accessories for Secure Installations",
-        imageUrl: "https://picsum.photos/400/300?37",
-        url: "https://www.greenheck.com/products/air-control/curbs-mounting-accessories",
-        date: "2025-03- 6",
-        issueNumber: "Issue #37",
-        productCategory: "Curbs & Mounting Accessories",
-        topic: "Codes & Standards",
-        communication: "CAPS Update"
-      },
-      {
-        id: "38",
-        title: "Motor Starters for Reliable Fan Operation",
-        imageUrl: "https://picsum.photos/400/300?38",
-        url: "https://www.greenheck.com/products/controls/motor-starters",
-        date: "2025-03- 7",
-        issueNumber: "Issue #38",
-        productCategory: "Motor Starters",
-        topic: "Fan Energy Index",
-        communication: "Bulletin"
-      },
-      {
-        id: "39",
-        title: "High-Efficiency Air Terminal Units for Large Spaces",
-        imageUrl: "https://picsum.photos/400/300?39",
-        url: "https://www.greenheck.com/products",
-        date: "2025-03- 9",
-        issueNumber: "Issue #39",
-        productCategory: "Air Terminal Units",
-        topic: "System Balancing",
-        communication: "Insights"
-      },
-      {
-        id: "40",
-        title: "Upgraded Vari-Green® Motor Drives for Enhanced Performance",
-        imageUrl: "https://picsum.photos/400/300?40",
-        url: "https://www.greenheck.com/products",
-        date: "2025-03-10",
-        issueNumber: "Issue #40",
-        productCategory: "Vari-Green® Controls, Motors, and Drives",
-        topic: "Energy Recovery Systems",
-        communication: "Bulletin"
-      },
-      {
-        id: "41",
-        title: "New Fire-Rated Louvers for High-Security Applications",
-        imageUrl: "https://picsum.photos/400/300?41",
-        url: "https://www.greenheck.com/products",
-        date: "2025-03-11",
-        issueNumber: "Issue #41",
-        productCategory: "Louvers",
-        topic: "Fire and Smoke Dampers",
-        communication: "CAPS Update"
-      },
-      {
-        id: "42",
-        title: "Innovative Sound and Vibration Control Techniques",
-        imageUrl: "https://picsum.photos/400/300?42",
-        url: "https://www.greenheck.com/products",
-        date: "2025-03-12",
-        issueNumber: "Issue #42",
-        productCategory: "Dampers",
-        topic: "Sound and Vibration Control",
-        communication: "Rep Update"
-      },
-      {
-        id: "43",
-        title: "Efficient Energy Recovery Ventilators for Modern Buildings",
-        imageUrl: "https://picsum.photos/400/300?43",
-        url: "https://www.greenheck.com/products",
-        date: "2025-03-13",
-        issueNumber: "Issue #43",
-        productCategory: "Energy Recovery Ventilators",
-        topic: "Energy Recovery Systems",
-        communication: "Insights"
-      },
-      {
-        id: "44",
-        title: "Optimized Kitchen Ventilation Systems for Commercial Use",
-        imageUrl: "https://picsum.photos/400/300?44",
-        url: "https://www.greenheck.com/products",
-        date: "2025-03-14",
-        issueNumber: "Issue #44",
-        productCategory: "Kitchen Ventilation Systems",
-        topic: "Ventilation Strategies",
-        communication: "Bulletin"
-      },
-      {
-        id: "45",
-        title: "Enhanced Airflow Measurement Tools for Accurate Readings",
-        imageUrl: "https://picsum.photos/400/300?45",
-        url: "https://www.greenheck.com/products",
-        date: "2025-03-15",
-        issueNumber: "Issue #45",
-        productCategory: "Airflow Measurement",
-        topic: "Codes & Standards",
-        communication: "CAPS Update"
-      },
-      {
-        id: "46",
-        title: "Dedicated Outdoor Air Systems for Large Facilities",
-        imageUrl: "https://picsum.photos/400/300?46",
-        url: "https://www.greenheck.com/products",
-        date: "2025-03-16",
-        issueNumber: "Issue #46",
-        productCategory: "Dedicated Outdoor Air Systems (DOAS)",
-        topic: "Indoor Air Quality",
-        communication: "Rep Update"
-      },
-      {
-        id: "47",
-        title: "Advanced Motor Starters for HVAC Applications",
-        imageUrl: "https://picsum.photos/400/300?47",
-        url: "https://www.greenheck.com/products",
-        date: "2025-03-17",
-        issueNumber: "Issue #47",
-        productCategory: "Motor Starters",
-        topic: "Fan Energy Index",
-        communication: "Insights"
-      },
-      {
-        id: "48",
-        title: "State-of-the-Art Gravity Ventilators for Optimal Airflow",
-        imageUrl: "https://picsum.photos/400/300?48",
-        url: "https://www.greenheck.com/products",
-        date: "2025-03-18",
-        issueNumber: "Issue #48",
-        productCategory: "Gravity Ventilators",
-        topic: "System Balancing",
-        communication: "Bulletin"
-      },
-      {
-        id: "49",
-        title: "New Duct Heaters for Energy-Efficient Heating Solutions",
-        imageUrl: "https://picsum.photos/400/300?49",
-        url: "https://www.greenheck.com/products",
-        date: "2025-03-19",
-        issueNumber: "Issue #49",
-        productCategory: "Duct Heaters",
-        topic: "Energy Recovery Systems",
-        communication: "CAPS Update"
-      },
-      {
-        id: "50",
-        title: "Greenheck-India's Latest Air Control Products",
-        imageUrl: "https://picsum.photos/400/300?50",
-        url: "https://www.greenheck.com/products",
-        date: "2025-03-20",
-        issueNumber: "Issue #50",
-        productCategory: "Greenheck-India",
-        topic: "Codes & Standards",
-        communication: "Rep Update"
+        title: "Technical Bulletin: System Maintenance",
+        communicationType: "Technical Update",
+        summary:
+          "Updated guidelines for system maintenance and service intervals to ensure optimal performance and longevity.",
+        issueNumber: "Issue# 50",
+        AuthorName: "Technical Services",
+        date: "March 5, 2029",
+        url: "https://cms-test.greenheck.com/resources/communications/system-maintenance",
+        topic: ["Product Launch", "Energy Efficiency"],
+        productCategory: ["Energy Recovery", "Ventilation"],
+        Category: [
+          {
+            Id: "124b2e5e-5425-401e-a779-1ed158167901",
+            Title: "Communications"
+          }
+        ],
+        Tags: ["Maintenance", "Technical", "Service"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
       }
     ];
 
@@ -1086,7 +1103,7 @@ class CommunicationApp {
   createFilters() {
     const topics = this.dataService.getUniqueValues("topic");
     const productCategories = this.dataService.getUniqueValues("productCategory");
-    const communicationTypes = this.dataService.getUniqueValues("communication");
+    const communicationTypes = this.dataService.getUniqueValues("communicationType");
 
     // Clear filters container
     this.filtersContainer.innerHTML = "";
