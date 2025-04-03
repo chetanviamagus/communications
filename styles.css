@@ -3,14 +3,13 @@
   font-family: "Helvetica-Condensed";
   font-style: normal;
   font-weight: 400;
-  src: url("../fonts/Helvetica-Condensed.otf");
+  src: url("./fonts/Helvetica-Condensed.otf");
 }
-
 @font-face {
   font-family: "Helvetica-Condensed-Bold";
   font-style: normal;
   font-weight: 700;
-  src: url("../fonts/Helvetica-Condensed-Bold.otf");
+  src: url("./fonts/Helvetica-Condensed-Bold.otf");
 }
 @font-face {
   font-display: block;
