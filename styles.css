@@ -1,13 +1,13 @@
 /* Font-face declarations for Helvetica Condensed family */
 @font-face {
-  font-family: "Helvetica-Condensed";
+  font-family: "Helvetica-Condensed", sans-serif;
   font-style: normal;
   font-weight: 400;
   src: url("https://www.greenheck.com/Content/GreenheckStyles/fonts/Helvetica-Condensed.otf");
 }
 
 @font-face {
-  font-family: "Helvetica-Condensed-Bold";
+  font-family: "Helvetica-Condensed-Bold", sans-serif;
   font-style: normal;
   font-weight: 700;
   src: url("https://www.greenheck.com/Content/GreenheckStyles/fonts/Helvetica-Condensed-Bold.otf");
@@ -146,7 +146,7 @@
 
 .suggestion-item {
   cursor: pointer;
-  font-family: "Helvetica-Condensed";
+  font-family: "Helvetica-Condensed", sans-serif;
   padding: 8px 10px;
 }
 
@@ -278,7 +278,7 @@ main {
   color: #57585a;
   display: flex;
   flex-direction: column;
-  font-family: "Helvetica-Condensed";
+  font-family: "Helvetica-Condensed", sans-serif;
   font-size: 15px;
   gap: 10px;
   list-style: none;
@@ -296,7 +296,7 @@ main {
   align-items: center;
   color: #555;
   display: flex;
-  font-family: "Helvetica-Condensed";
+  font-family: "Helvetica-Condensed", sans-serif;
   font-size: 0.9375rem;
 }
 
@@ -324,7 +324,7 @@ main {
   color: #333333;
   cursor: pointer;
   display: flex;
-  font-family: "Helvetica-Condensed";
+  font-family: "Helvetica-Condensed", sans-serif;
   font-size: 14px;
   gap: 5px;
   margin-left: 20px;
@@ -401,7 +401,7 @@ main {
 
 .sort-container label {
   color: #555;
-  font-family: "Helvetica-Condensed";
+  font-family: "Helvetica-Condensed", sans-serif;
   font-size: 0.9rem;
   margin-right: 10px;
 }
@@ -474,7 +474,7 @@ main {
 
 .product-title {
   color: rgba(87, 88, 90, 1);
-  font-family: "Helvetica-Condensed-Bold";
+  font-family: "Helvetica-Condensed-Bold", sans-serif;
   font-size: 1.125rem;
   font-weight: 400;
   letter-spacing: 0px;
@@ -489,7 +489,7 @@ main {
 .product-description {
   color: rgba(87, 88, 90, 1);
   flex-grow: 1;
-  font-family: "Helvetica-Condensed";
+  font-family: "Helvetica-Condensed", sans-serif;
   font-size: 0.9375rem;
   font-weight: 400;
   letter-spacing: 0px;
@@ -502,7 +502,7 @@ main {
 .product-meta-info,
 .product-category-info {
   color: rgba(87, 88, 90, 1);
-  font-family: "Helvetica-Condensed";
+  font-family: "Helvetica-Condensed", sans-serif;
   font-size: 13px;
   font-weight: 400;
   letter-spacing: 0px;
@@ -519,7 +519,7 @@ main {
 
 .communication-type {
   color: #333;
-  font-family: "Helvetica-Condensed";
+  font-family: "Helvetica-Condensed", sans-serif;
   font-size: 13px;
   font-weight: 400;
 }
@@ -544,7 +544,7 @@ main {
   color: white;
   cursor: pointer;
   display: block;
-  font-family: "Helvetica-Condensed-Bold";
+  font-family: "Helvetica-Condensed-Bold", sans-serif;
   font-size: 16px;
   font-weight: bold;
   line-height: 18px;
@@ -634,7 +634,7 @@ main {
 
 .version-number {
   color: #333;
-  font-family: "Helvetica-Condensed-Bold";
+  font-family: "Helvetica-Condensed-Bold", sans-serif;
   font-size: 1.2rem;
 }
 
