@@ -147,6 +147,7 @@
   cursor: pointer;
   font-family: "Helvetica-Condensed", sans-serif;
   padding: 8px 10px;
+  transition: background-color 0.3s ease;
 }
 
 .suggestion-item:hover {
@@ -306,6 +307,11 @@ main {
   margin: 0;
   opacity: 1;
   width: 20px;
+  transition: all 0.3s ease;
+}
+
+.filter-list input[type="checkbox"]:hover {
+  border-color: #d97a24;
 }
 
 .filter-list label.hidden-option {
@@ -329,6 +335,7 @@ main {
   margin-left: 20px;
   margin-top: 15px;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 .view-more:hover {
@@ -366,6 +373,7 @@ main {
   cursor: pointer;
   font-size: 17px;
   padding: 8px 12px;
+  transition: all 0.3s ease;
 }
 
 .view-btn:hover {
@@ -387,6 +395,7 @@ main {
 .products-grid.list-view .product-card {
   display: flex;
   flex-direction: row;
+  transition: flex-direction 0.3s ease;
 }
 
 .products-grid.list-view .product-image {
@@ -421,6 +430,7 @@ main {
   font-size: 20px;
   padding: 6px 12px 10px 12px;
   width: 245px;
+  transition: all 0.3s ease;
 }
 
 .sort-container select:hover {
@@ -437,6 +447,7 @@ main {
   gap: 24px;
   grid-template-columns: repeat(3, 1fr);
   margin-bottom: 32px;
+  transition: grid-template-columns 0.3s ease;
 }
 
 .product-card {
@@ -446,6 +457,14 @@ main {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .product-image {
@@ -551,6 +570,7 @@ main {
   text-align: center;
   text-decoration: none;
   width: auto;
+  transition: all 0.3s ease;
 }
 
 .prd-btn:hover {
@@ -575,6 +595,7 @@ main {
   top: 0;
   width: 100%;
   z-index: 1000;
+  transition: opacity 0.3s ease;
 }
 
 .modal-content {
@@ -585,6 +606,9 @@ main {
   max-width: 600px;
   padding: 20px;
   width: 80%;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
 .close {
