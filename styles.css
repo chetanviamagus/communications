@@ -1,13 +1,13 @@
 /* Font-face declarations for Helvetica Condensed family */
 @font-face {
-  font-family: "Helvetica-Condensed", sans-serif;
+  font-family: "Helvetica-Condensed";
   font-style: normal;
   font-weight: 400;
   src: url("https://cms-test.greenheck.com/Content/GreenheckStyles/fonts/Helvetica-Condensed.otf");
 }
 
 @font-face {
-  font-family: "Helvetica-Condensed-Bold", sans-serif;
+  font-family: "Helvetica-Condensed-Bold";
   font-style: normal;
   font-weight: 700;
   src: url("https://cms-test.greenheck.com/Content/GreenheckStyles/fonts/Helvetica-Condensed-Bold.otf");
