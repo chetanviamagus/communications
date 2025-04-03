@@ -75,7 +75,9 @@ class SearchIndexService {
     // Get title suggestions
     this.titleIndex.forEach((_, word) => {
       if (word.startsWith(searchTerm)) {
-        suggestions.add(word);
+        // Remove colon from the suggestion
+        const cleanWord = word.replace(/:/g, "");
+        suggestions.add(cleanWord);
       }
     });
 
@@ -83,7 +85,9 @@ class SearchIndexService {
     if (this.indexSummary) {
       this.summaryIndex.forEach((_, word) => {
         if (word.startsWith(searchTerm)) {
-          suggestions.add(word);
+          // Remove colon from the suggestion
+          const cleanWord = word.replace(/:/g, "");
+          suggestions.add(cleanWord);
         }
       });
     }
@@ -704,7 +708,7 @@ class CommunicationApp {
           "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
       },
       {
-        title: "Industry Standards Update: ASHRAE 2025",
+        title: "Technical Bulletin Industry Standards Update: ASHRAE 2025",
         communicationType: "REP Update",
         summary:
           "Overview of the latest ASHRAE standards and how they impact HVAC system design and implementation.",
