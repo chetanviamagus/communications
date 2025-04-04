@@ -186,6 +186,9 @@
   color: #57585a;
   font-family: "Helvetica-Condensed-Bold", sans-serif;
   font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 /* Load More Button */
@@ -748,4 +751,46 @@ main {
   font-family: "Helvetica-Condensed-Bold", sans-serif;
   font-size: 21px;
   margin-bottom: 15px;
+}
+
+.filtered-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.selected-filter {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-family: "Helvetica-Condensed", sans-serif;
+  font-size: 14px;
+  color: #57585a;
+}
+
+.selected-filter .remove-filter {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  margin-left: 8px;
+  padding: 0;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.selected-filter .remove-filter:hover {
+  color: #d97a24;
+}
+
+/* Remove the old selected filters container styles */
+.selected-filters-container {
+  display: none;
 }

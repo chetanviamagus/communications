@@ -386,6 +386,46 @@ class CommunicationDataService {
     // If no format matches, return the original string
     return dateString;
   }
+
+  getActiveFilters() {
+    const filters = [];
+
+    // Add non-timeframe filters
+    Object.entries(this.activeFilters).forEach(([type, values]) => {
+      if (type !== "timeframe" && Array.isArray(values)) {
+        values.forEach(value => {
+          filters.push({
+            type,
+            value,
+            displayValue: value
+          });
+        });
+      }
+    });
+
+    // Add timeframe filter if it's not "All Time"
+    if (this.activeFilters.timeframe !== "All Time") {
+      filters.push({
+        type: "timeframe",
+        value: this.activeFilters.timeframe,
+        displayValue: this.activeFilters.timeframe
+      });
+    }
+
+    return filters;
+  }
+
+  removeFilter(type, value) {
+    if (type === "timeframe") {
+      this.activeFilters.timeframe = "All Time";
+    } else {
+      const index = this.activeFilters[type].indexOf(value);
+      if (index !== -1) {
+        this.activeFilters[type].splice(index, 1);
+      }
+    }
+    this.applyFilters();
+  }
 }
 
 // UI Components - responsible for rendering and UI interactions
@@ -1035,6 +1075,7 @@ class CommunicationApp {
     this.cardsContainer = document.querySelector("#communications-container");
     this.countElement = document.querySelector("#communication-count");
     this.loadMoreButton = document.querySelector(".load-more");
+    this.selectedFiltersContainer = document.getElementById("filtered-tags");
 
     this.cardList = new CardListComponent(this.cardsContainer, this.countElement);
 
@@ -1059,6 +1100,9 @@ class CommunicationApp {
 
     // Setup view toggle buttons
     this.setupViewToggle();
+
+    // Update selected filters
+    this.updateSelectedFilters();
   }
 
   createSearchComponent() {
@@ -1120,6 +1164,7 @@ class CommunicationApp {
     }
     this.cardList.resetPagination();
     this.updateDisplay();
+    this.updateSelectedFilters();
   }
 
   handleSearch(searchTerm) {
@@ -1147,6 +1192,9 @@ class CommunicationApp {
         this.loadMoreButton.textContent = "LOAD MORE";
       }
     }
+
+    // Update selected filters
+    this.updateSelectedFilters();
   }
 
   setupLoadMoreButton() {
@@ -1190,6 +1238,48 @@ class CommunicationApp {
         this.updateDisplay();
       });
     }
+  }
+
+  updateSelectedFilters() {
+    if (!this.selectedFiltersContainer) return;
+
+    const activeFilters = this.dataService.getActiveFilters();
+    this.selectedFiltersContainer.innerHTML = activeFilters
+      .map(
+        filter => `
+        <div class="selected-filter" data-type="${filter.type}" data-value="${filter.value}">
+          ${filter.displayValue}
+          <button class="remove-filter" aria-label="Remove filter">×</button>
+        </div>
+      `
+      )
+      .join("");
+
+    // Add click handlers for remove buttons
+    this.selectedFiltersContainer.querySelectorAll(".remove-filter").forEach(button => {
+      button.addEventListener("click", e => {
+        const filterElement = e.target.closest(".selected-filter");
+        const type = filterElement.dataset.type;
+        const value = filterElement.dataset.value;
+
+        // Remove the filter
+        this.dataService.removeFilter(type, value);
+
+        // Update UI
+        this.updateSelectedFilters();
+        this.cardList.resetPagination();
+        this.updateDisplay();
+
+        // Update checkbox/dropdown UI
+        if (type === "timeframe") {
+          const select = document.querySelector(`#timeframe-select`);
+          if (select) select.value = "All Time";
+        } else {
+          const checkbox = document.querySelector(`#${value.toLowerCase().replace(/\s+/g, "-")}`);
+          if (checkbox) checkbox.checked = false;
+        }
+      });
+    });
   }
 }
 
