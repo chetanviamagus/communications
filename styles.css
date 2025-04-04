@@ -696,3 +696,56 @@ main {
     padding: 0 15px !important;
   }
 }
+
+/* Add these styles for the dropdown filter */
+.filter-dropdown {
+  width: 100%;
+  padding: 6px 12px 10px 12px;
+  font-family: "Helvetica-Condensed", sans-serif;
+  font-size: 20px;
+  color: #57585a;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  appearance: none;
+  cursor: pointer;
+  position: relative;
+  box-shadow:
+    inset -4px -2px 10px 0 #ccc,
+    0 0 0 0 rgba(0, 0, 0, 0.62);
+  -webkit-box-shadow:
+    inset -4px -2px 10px 0 #ccc,
+    0 0 0 0 rgba(0, 0, 0, 0.62);
+  transition: all 0.3s ease;
+}
+
+/* Custom dropdown arrow styling */
+.filter-section select.filter-dropdown {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  padding-right: 35px;
+}
+
+.filter-dropdown:hover {
+  border-color: #d97a24;
+}
+
+.filter-dropdown:focus {
+  outline: none;
+  border-color: #d97a24;
+}
+
+/* Ensure proper spacing between filters */
+.filter-section:not(:last-child) {
+  border-bottom: 1px solid #eee;
+}
+
+/* Filter section title styling */
+.filter-section h2 {
+  color: #333;
+  font-family: "Helvetica-Condensed-Bold", sans-serif;
+  font-size: 21px;
+  margin-bottom: 15px;
+}

@@ -105,10 +105,21 @@ class CommunicationDataService {
     this.activeFilters = {
       topics: [],
       "product-categories": [],
-      "communication-type": []
+      "communication-type": [],
+      timeframe: "All Time"
     };
     this.searchTerm = "";
     this.searchIndex = new SearchIndexService(rawData);
+    this.timeframes = [
+      "All Time",
+      "Last Year",
+      "Last 9 Months",
+      "Last 6 Months",
+      "Last 3 Months",
+      "Last Month",
+      "Last Week"
+    ];
+    this.sortOrder = "newest"; // Default sort order
   }
 
   getUniqueValues(property) {
@@ -148,9 +159,97 @@ class CommunicationDataService {
     return this.searchIndex.getSuggestions(prefix);
   }
 
+  getTimeframes() {
+    return this.timeframes;
+  }
+
+  setSortOrder(order) {
+    this.sortOrder = order;
+    this.applyFilters();
+  }
+
   applyFilters() {
     // Start with all data
     let result = [...this.data];
+
+    // Apply timeframe filter first
+    if (this.activeFilters.timeframe !== "All Time") {
+      const now = new Date();
+      const filterDate = new Date();
+
+      switch (this.activeFilters.timeframe) {
+        case "Last Week":
+          filterDate.setDate(now.getDate() - 7);
+          break;
+        case "Last Month":
+          filterDate.setMonth(now.getMonth() - 1);
+          filterDate.setDate(now.getDate());
+          break;
+        case "Last 3 Months":
+          filterDate.setMonth(now.getMonth() - 3);
+          filterDate.setDate(now.getDate());
+          break;
+        case "Last 6 Months":
+          filterDate.setMonth(now.getMonth() - 6);
+          filterDate.setDate(now.getDate());
+          break;
+        case "Last 9 Months":
+          filterDate.setMonth(now.getMonth() - 9);
+          filterDate.setDate(now.getDate());
+          break;
+        case "Last Year":
+          filterDate.setFullYear(now.getFullYear() - 1);
+          filterDate.setDate(now.getDate());
+          break;
+      }
+
+      result = result.filter(item => {
+        // Parse the ISO date string (YYYY-MM-DD)
+        const itemDate = new Date(item.date);
+
+        // Set times to midnight for accurate day comparison
+        const compareDate = new Date(
+          itemDate.getFullYear(),
+          itemDate.getMonth(),
+          itemDate.getDate()
+        );
+        const compareFilterDate = new Date(
+          filterDate.getFullYear(),
+          filterDate.getMonth(),
+          filterDate.getDate()
+        );
+        const compareNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        // For future dates, use the item's date as the reference point
+        if (compareDate > compareNow) {
+          const futureFilterDate = new Date(itemDate);
+          switch (this.activeFilters.timeframe) {
+            case "Last Week":
+              futureFilterDate.setDate(itemDate.getDate() - 7);
+              break;
+            case "Last Month":
+              futureFilterDate.setMonth(itemDate.getMonth() - 1);
+              break;
+            case "Last 3 Months":
+              futureFilterDate.setMonth(itemDate.getMonth() - 3);
+              break;
+            case "Last 6 Months":
+              futureFilterDate.setMonth(itemDate.getMonth() - 6);
+              break;
+            case "Last 9 Months":
+              futureFilterDate.setMonth(itemDate.getMonth() - 9);
+              break;
+            case "Last Year":
+              futureFilterDate.setFullYear(itemDate.getFullYear() - 1);
+              break;
+          }
+          return compareDate >= futureFilterDate;
+        }
+
+        // For past dates, use the current date as the reference point
+        return compareDate >= compareFilterDate && compareDate <= compareNow;
+      });
+    }
 
     // Apply search if there is a search term
     if (this.searchTerm && this.searchTerm.trim() !== "") {
@@ -158,18 +257,14 @@ class CommunicationDataService {
       result = result.filter(item => searchResults.includes(item));
     }
 
-    // Apply category filters
-    // If no filters are active, keep all data after search
-    if (!Object.values(this.activeFilters).every(filters => filters.length === 0)) {
-      result = result.filter(item => {
-        // Check if item matches all filter categories
-        return Object.entries(this.activeFilters).every(([filterType, selectedValues]) => {
-          // If no filters of this type are selected, this filter passes
-          if (selectedValues.length === 0) {
-            return true;
-          }
+    // Apply other category filters
+    const activeFilterTypes = Object.entries(this.activeFilters).filter(
+      ([type, values]) => type !== "timeframe" && values.length > 0
+    );
 
-          // Map filter type to item property
+    if (activeFilterTypes.length > 0) {
+      result = result.filter(item => {
+        return activeFilterTypes.every(([filterType, selectedValues]) => {
           let itemProperty;
           switch (filterType) {
             case "topics":
@@ -183,16 +278,20 @@ class CommunicationDataService {
               break;
           }
 
-          // Handle array properties
           if (Array.isArray(itemProperty)) {
             return selectedValues.some(value => itemProperty.includes(value));
           }
-
-          // Check if the item's property is in the selected values
           return selectedValues.includes(itemProperty);
         });
       });
     }
+
+    // Apply sorting
+    result.sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return this.sortOrder === "newest" ? dateB - dateA : dateA - dateB;
+    });
 
     this.filteredData = result;
   }
@@ -200,45 +299,148 @@ class CommunicationDataService {
   getFilteredData() {
     return this.filteredData;
   }
+
+  convertToISO(dateString) {
+    // If it's already in ISO format, return as is
+    if (dateString.match(/^\d{4}-\d{2}-\d{2}/)) {
+      return dateString;
+    }
+
+    // Try different date formats
+    const formats = [
+      // Month Day, Year (e.g., "February 5, 2025")
+      /^([A-Za-z]+)\s+(\d{1,2}),\s+(\d{4})$/,
+      // Day Month Year (e.g., "5 February 2025")
+      /^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/,
+      // MM/DD/YYYY or DD/MM/YYYY
+      /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/,
+      // YYYY/MM/DD
+      /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/
+    ];
+
+    for (const format of formats) {
+      const match = dateString.match(format);
+      if (match) {
+        let year, month, day;
+
+        if (format === formats[0]) {
+          // Month Day, Year
+          const monthNames = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+          ];
+          month = (monthNames.indexOf(match[1]) + 1).toString().padStart(2, "0");
+          day = match[2].padStart(2, "0");
+          year = match[3];
+        } else if (format === formats[1]) {
+          // Day Month Year
+          const monthNames = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+          ];
+          month = (monthNames.indexOf(match[2]) + 1).toString().padStart(2, "0");
+          day = match[1].padStart(2, "0");
+          year = match[3];
+        } else if (format === formats[2]) {
+          // MM/DD/YYYY or DD/MM/YYYY
+          // Try both formats
+          const date = new Date(dateString);
+          if (!isNaN(date.getTime())) {
+            year = date.getFullYear();
+            month = (date.getMonth() + 1).toString().padStart(2, "0");
+            day = date.getDate().toString().padStart(2, "0");
+          } else {
+            continue;
+          }
+        } else if (format === formats[3]) {
+          // YYYY/MM/DD
+          year = match[1];
+          month = match[2].padStart(2, "0");
+          day = match[3].padStart(2, "0");
+        }
+
+        return `${year}-${month}-${day}`;
+      }
+    }
+
+    // If no format matches, return the original string
+    return dateString;
+  }
 }
 
 // UI Components - responsible for rendering and UI interactions
 class FilterComponent {
-  constructor(filterType, options, container, changeCallback) {
+  constructor(filterType, options, container, changeCallback, filterStyle = "checkbox") {
     this.filterType = filterType;
-    this.options = options || []; // Ensure options is at least an empty array
+    this.options = options || [];
     this.container = container;
     this.changeCallback = changeCallback;
+    this.filterStyle = filterStyle; // 'checkbox' or 'dropdown'
     this.initialVisibleCount = 2;
   }
 
   render() {
     const filterId = this.filterType.toLowerCase().replace(/\s+/g, "-");
-    const hasMoreOptions = this.options.length > this.initialVisibleCount;
 
-    const filterHTML = `
+    let filterHTML;
+    if (this.filterStyle === "dropdown") {
+      filterHTML = `
+        <section class="filter-section" id="${filterId}-section">
+          <h2>${this.filterType}</h2>
+          <select class="filter-dropdown" id="${filterId}-select">
+            ${this.options.map(option => `<option value="${option}">${option}</option>`).join("")}
+          </select>
+        </section>
+      `;
+    } else {
+      // Existing checkbox filter HTML
+      const hasMoreOptions = this.options.length > this.initialVisibleCount;
+      filterHTML = `
         <section class="filter-section" id="${filterId}-section">
           <h2>${this.filterType}</h2>
           <ul class="filter-list" role="group" aria-label="${this.filterType} filters">
             ${this.options
-              .filter(option => option) // Filter out any undefined/null options
+              .filter(option => option)
               .map(
                 (option, index) => `
-              <li ${index >= this.initialVisibleCount ? `class="hidden-option ${filterId}-hidden" style="display: none;"` : 'class="flex"'}>
-                <input type="checkbox" id="${String(option).toLowerCase().replace(/\s+/g, "-")}" name="${filterId}">
-                <label for="${String(option).toLowerCase().replace(/\s+/g, "-")}">${option}</label>
-              </li>
-            `
+                <li ${index >= this.initialVisibleCount ? `class="hidden-option ${filterId}-hidden" style="display: none;"` : 'class="flex"'}>
+                  <input type="checkbox" id="${String(option).toLowerCase().replace(/\s+/g, "-")}" name="${filterId}">
+                  <label for="${String(option).toLowerCase().replace(/\s+/g, "-")}">${option}</label>
+                </li>
+              `
               )
               .join("")}
           </ul>
           ${
             hasMoreOptions
-              ? `<button type="button" class="view-more" data-filter-type="${filterId}"><i class="fas fa-chevron-down"></i> View More</button>`
+              ? `<button type="button" class="view-more" data-filter-type="${filterId}">
+              <i class="fas fa-chevron-down"></i> View More
+            </button>`
               : ""
           }
         </section>
       `;
+    }
 
     this.container.insertAdjacentHTML("beforeend", filterHTML);
     this.attachEventListeners();
@@ -247,29 +449,41 @@ class FilterComponent {
   attachEventListeners() {
     const filterId = this.filterType.toLowerCase().replace(/\s+/g, "-");
 
-    // Add checkbox event listeners
-    document.querySelectorAll(`#${filterId}-section input[type="checkbox"]`).forEach(checkbox => {
-      checkbox.addEventListener("change", () => {
-        const value = checkbox.nextElementSibling.textContent.trim();
-        this.changeCallback(filterId, value, checkbox.checked);
+    if (this.filterStyle === "dropdown") {
+      const select = document.getElementById(`${filterId}-select`);
+
+      // Set initial value if it's the timeframe dropdown
+      if (filterId === "timeframe" && this.options.includes("All Time")) {
+        select.value = "All Time";
+      }
+
+      select.addEventListener("change", e => {
+        this.changeCallback(filterId, e.target.value);
       });
-    });
-
-    // Add view more/less event listener
-    const viewMoreBtn = document.querySelector(`#${filterId}-section .view-more`);
-    if (viewMoreBtn) {
-      viewMoreBtn.addEventListener("click", () => {
-        const hiddenOptions = document.querySelectorAll(`.${filterId}-hidden`);
-        const isShowingMore = viewMoreBtn.textContent.trim() === "View More";
-
-        hiddenOptions.forEach(option => {
-          option.style.display = isShowingMore ? "flex" : "none";
+    } else {
+      // Existing checkbox event listeners
+      document.querySelectorAll(`#${filterId}-section input[type="checkbox"]`).forEach(checkbox => {
+        checkbox.addEventListener("change", () => {
+          const value = checkbox.nextElementSibling.textContent.trim();
+          this.changeCallback(filterId, value, checkbox.checked);
         });
-
-        viewMoreBtn.innerHTML = isShowingMore
-          ? "<i class='fas fa-chevron-up'></i> View Less"
-          : "<i class='fas fa-chevron-down'></i> View More";
       });
+
+      const viewMoreBtn = document.querySelector(`#${filterId}-section .view-more`);
+      if (viewMoreBtn) {
+        viewMoreBtn.addEventListener("click", () => {
+          const hiddenOptions = document.querySelectorAll(`.${filterId}-hidden`);
+          const isShowingMore = viewMoreBtn.textContent.includes("View More");
+
+          hiddenOptions.forEach(option => {
+            option.style.display = isShowingMore ? "flex" : "none";
+          });
+
+          viewMoreBtn.innerHTML = isShowingMore
+            ? "<i class='fas fa-chevron-up'></i> View Less"
+            : "<i class='fas fa-chevron-down'></i> View More";
+        });
+      }
     }
   }
 }
@@ -642,8 +856,95 @@ class CardListComponent {
 // Application Controller - coordinates between data and UI components
 class CommunicationApp {
   constructor() {
-    // Data array is initialized here
+    // Get current date for relative date calculations
+    const now = new Date();
+
+    // Calculate dates for each timeframe
+    const lastWeekDate = new Date(now);
+    lastWeekDate.setDate(now.getDate() - 3); // 3 days ago (within last week)
+
+    const lastMonthDate = new Date(now);
+    lastMonthDate.setDate(now.getDate() - 20); // 20 days ago (within last month)
+
+    const last3MonthsDate = new Date(now);
+    last3MonthsDate.setMonth(now.getMonth() - 2); // 2 months ago (within last 3 months)
+
+    const last6MonthsDate = new Date(now);
+    last6MonthsDate.setMonth(now.getMonth() - 5); // 5 months ago (within last 6 months)
+
+    const last9MonthsDate = new Date(now);
+    last9MonthsDate.setMonth(now.getMonth() - 8); // 8 months ago (within last 9 months)
+
+    const lastYearDate = new Date(now);
+    lastYearDate.setMonth(now.getMonth() - 11); // 11 months ago (within last year)
+
     this.data = [
+      {
+        title: "Last Week Test Communication",
+        communicationType: "Bulletin",
+        summary: "This is a test communication from last week",
+        issueNumber: "Issue# 1",
+        date: "2025-04-4",
+        topic: ["Test Topic"],
+        productCategory: ["Test Category"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Last Month Test Communication",
+        communicationType: "CAPS Update",
+        summary: "This is a test communication from last month",
+        issueNumber: "Issue# 2",
+        date: "2025-03-01",
+        topic: ["Test Topic"],
+        productCategory: ["Test Category"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Last 3 Months Test Communication",
+        communicationType: "Technical Update",
+        summary: "This is a test communication from 3 months ago",
+        issueNumber: "Issue# 3",
+        date: "2025-01-15",
+        topic: ["Test Topic"],
+        productCategory: ["Test Category"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Last 6 Months Test Communication",
+        communicationType: "REP Update",
+        summary: "This is a test communication from 6 months ago",
+        issueNumber: "Issue# 4",
+        date: "2024-10-15",
+        topic: ["Test Topic"],
+        productCategory: ["Test Category"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Last 9 Months Test Communication",
+        communicationType: "Insights",
+        summary: "This is a test communication from 9 months ago",
+        issueNumber: "Issue# 5",
+        date: "2024-07-10",
+        topic: ["Test Topic"],
+        productCategory: ["Test Category"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Last Year Test Communication",
+        communicationType: "Bulletin",
+        summary: "This is a test communication from last year",
+        issueNumber: "Issue# 6",
+        date: "2024-04-15",
+        topic: ["Test Topic"],
+        productCategory: ["Test Category"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
       {
         title: "Consulting-Specifying Engineer Product of the Year: AFL-601 Nomination",
         communicationType: "Bulletin",
@@ -651,7 +952,7 @@ class CommunicationApp {
           "The AFL-601 Wind-Driven Rain FEMA Louver is a nominee for the Consulting-Specifying Engineer (CSE) Product of the Year awards in the HVAC category—and we need your vote to win!",
         issueNumber: "Issue# 1",
         AuthorName: "John Smith",
-        date: "February 5, 2025",
+        date: "2024-02-05",
         url: "https://cms-test.greenheck.com/resources/communications/consulting-specifying-engineer-product-of-the-year--afl-601-nomination",
         topic: ["Industry Awards", "Product Recognition"],
         productCategory: ["AFL-601", "Louvers"],
@@ -663,16 +964,16 @@ class CommunicationApp {
         ],
         Tags: ["FEMA", "HVAC", "Awards"],
         imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
       },
       {
         title: "New Energy Recovery Ventilator Series Launch",
         communicationType: "CAPS Update",
         summary:
-          "Introducing our new line of Energy Recovery Ventilators featuring advanced heat exchange technology and improved energy efficiency ratings.",
+          "Introducing our new line of Energy Recovery Ventilators featuring advanced heat exchange technology.",
         issueNumber: "Issue# 2",
         AuthorName: "Sarah Johnson",
-        date: "March 15, 2025",
+        date: "2023-12-10",
         url: "https://cms-test.greenheck.com/resources/communications/new-energy-recovery-ventilator-series",
         topic: ["Product Innovation", "Energy Solutions"],
         productCategory: ["ERV", "Ventilation Systems"],
@@ -684,16 +985,15 @@ class CommunicationApp {
         ],
         Tags: ["HVAC", "Sustainability", "Innovation"],
         imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
       },
       {
         title: "Technical Bulletin: Fan Performance Optimization",
         communicationType: "Technical Update",
-        summary:
-          "Latest findings on fan performance optimization techniques and best practices for installation and maintenance.",
+        summary: "Latest findings on fan performance optimization techniques and best practices.",
         issueNumber: "Issue# 3",
         AuthorName: "Michael Chen",
-        date: "April 1, 2025",
+        date: "2022-06-15",
         url: "https://cms-test.greenheck.com/resources/communications/fan-performance-optimization",
         topic: ["Technical Research", "System Optimization"],
         productCategory: ["Fans", "Performance Equipment"],
@@ -705,17 +1005,16 @@ class CommunicationApp {
         ],
         Tags: ["Technical", "Performance", "Maintenance"],
         imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
       },
       {
-        title: "Technical Bulletin Industry Standards Update: ASHRAE 2025",
+        title: "Industry Standards Update: ASHRAE 2024",
         communicationType: "REP Update",
-        summary:
-          "Overview of the latest ASHRAE standards and how they impact HVAC system design and implementation.",
+        summary: "Overview of the latest ASHRAE standards and their impact.",
         issueNumber: "Issue# 4",
         AuthorName: "Emily Rodriguez",
-        date: "May 10, 2025",
-        url: "https://cms-test.greenheck.com/resources/communications/ashrae-2025-update",
+        date: "2022-03-20",
+        url: "https://cms-test.greenheck.com/resources/communications/ashrae-2024-update",
         topic: ["Industry Standards", "Regulatory Updates"],
         productCategory: ["Compliance Systems", "Standards Implementation"],
         Category: [
@@ -726,343 +1025,7 @@ class CommunicationApp {
         ],
         Tags: ["ASHRAE", "Standards", "Compliance"],
         imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
-      },
-      {
-        title: "Customer Success Story: Hospital Ventilation Upgrade",
-        communicationType: "Insights",
-        summary:
-          "How our ventilation solutions helped a major hospital improve indoor air quality and energy efficiency.",
-        issueNumber: "Issue# 5",
-        AuthorName: "David Wilson",
-        date: "June 20, 2025",
-        url: "https://cms-test.greenheck.com/resources/communications/hospital-ventilation-case-study",
-        topic: ["Customer Success", "Healthcare Solutions"],
-        productCategory: ["Healthcare Systems", "Ventilation Solutions"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["Healthcare", "Case Study", "IAQ"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
-      },
-      {
-        title: "New Product Line: Commercial Kitchen Ventilation",
-        communicationType: "CAPS Update",
-        summary:
-          "Introducing our latest commercial kitchen ventilation solutions with enhanced capture efficiency and reduced energy consumption.",
-        issueNumber: "Issue# 6",
-        AuthorName: "Robert Taylor",
-        date: "July 5, 2025",
-        url: "https://cms-test.greenheck.com/resources/communications/commercial-kitchen-ventilation",
-        topic: ["Product Launch", "Commercial Solutions"],
-        productCategory: ["Kitchen Systems", "Commercial Ventilation"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["Commercial", "Kitchen", "Ventilation"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
-      },
-      {
-        title: "Energy Efficiency Webinar Series",
-        communicationType: "Insights",
-        summary:
-          "Join our upcoming webinar series focusing on energy efficiency in HVAC systems and learn about the latest technologies and best practices.",
-        issueNumber: "Issue# 7",
-        AuthorName: "Lisa Anderson",
-        date: "August 12, 2025",
-        url: "https://cms-test.greenheck.com/resources/communications/energy-efficiency-webinar",
-        topic: ["Educational Events", "Industry Training"],
-        productCategory: ["Training Programs"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["Webinar", "Energy", "Education"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
-      },
-      {
-        title: "Technical Service Bulletin: Fan Motor Maintenance",
-        communicationType: "Technical Update",
-        summary:
-          "Important updates regarding fan motor maintenance procedures and recommended service intervals for optimal performance.",
-        issueNumber: "Issue# 8",
-        AuthorName: "James Wilson",
-        date: "September 3, 2025",
-        url: "https://cms-test.greenheck.com/resources/communications/fan-motor-maintenance",
-        topic: ["Technical Support", "Maintenance Guidelines"],
-        productCategory: ["Fan Motors", "Maintenance Parts"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["Technical", "Maintenance", "Motors"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
-      },
-      {
-        title: "Case Study: University Campus Ventilation Upgrade",
-        communicationType: "Insights",
-        summary:
-          "How our ventilation solutions transformed the indoor air quality and energy efficiency of a major university campus.",
-        issueNumber: "Issue# 9",
-        AuthorName: "Patricia Lee",
-        date: "October 15, 2025",
-        url: "https://cms-test.greenheck.com/resources/communications/university-ventilation-case-study",
-        topic: ["Educational Facilities", "Sustainability Projects"],
-        productCategory: ["Campus Systems", "Educational Ventilation"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["Education", "Case Study", "IAQ"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
-      },
-      {
-        title: "New Product: High-Efficiency Air Terminal Units",
-        communicationType: "CAPS Update",
-        summary:
-          "Introducing our new line of high-efficiency air terminal units with advanced control capabilities and improved energy performance.",
-        issueNumber: "Issue# 10",
-        AuthorName: "Thomas Brown",
-        date: "November 7, 2025",
-        url: "https://cms-test.greenheck.com/resources/communications/high-efficiency-air-terminal-units",
-        topic: ["Product Innovation", "Energy Solutions"],
-        productCategory: ["Air Terminal Units", "Control Systems"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["ATU", "Efficiency", "Controls"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
-      },
-      {
-        title: "Technical Bulletin: Fire and Smoke Damper Testing",
-        communicationType: "Technical Update",
-        summary:
-          "Updated procedures and requirements for fire and smoke damper testing in accordance with the latest NFPA standards.",
-        issueNumber: "Issue# 11",
-        AuthorName: "Richard Martinez",
-        date: "December 1, 2025",
-        url: "https://cms-test.greenheck.com/resources/communications/fire-smoke-damper-testing",
-        topic: ["Safety"],
-        productCategory: ["Fire Dampers", "Smoke Dampers"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["Fire", "Safety", "Testing"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
-      },
-      {
-        title: "Product Recall Notice: Model XYZ-123 Fans",
-        communicationType: "Safety Alert",
-        summary:
-          "Important safety notice regarding a specific batch of Model XYZ-123 fans. Please review the details and take appropriate action.",
-        issueNumber: "Issue# 12",
-        AuthorName: "Safety Department",
-        date: "January 10, 2026",
-        url: "https://cms-test.greenheck.com/resources/communications/xyz-123-recall",
-        topic: ["Recall"],
-        productCategory: ["Fans", "Safety Gear"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["Safety", "Recall", "Fans"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
-      },
-      {
-        title: "New Distribution Center Opening",
-        communicationType: "Company News",
-        summary:
-          "Announcing the opening of our new distribution center in the Midwest, improving service and delivery times for our customers.",
-        issueNumber: "Issue# 13",
-        AuthorName: "Corporate Communications",
-        date: "February 15, 2026",
-        url: "https://cms-test.greenheck.com/resources/communications/new-distribution-center",
-        topic: ["Company News", "Facilities"],
-        productCategory: ["Company", "Operations"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["Facilities", "Operations", "Company"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
-      },
-      {
-        title: "Technical Service Bulletin: Control System Update",
-        communicationType: "Technical Update",
-        summary:
-          "Important update regarding our control systems software and recommended upgrade procedures for optimal performance.",
-        issueNumber: "Issue# 14",
-        AuthorName: "Technical Services",
-        date: "March 5, 2026",
-        url: "https://cms-test.greenheck.com/resources/communications/control-system-update",
-        topic: ["Controls"],
-        productCategory: ["Software"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["Controls", "Software", "Update"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
-      },
-      {
-        title: "Case Study: Data Center Cooling Solution",
-        communicationType: "Case Study",
-        summary:
-          "How our innovative cooling solutions helped a major data center achieve optimal temperature control and energy efficiency.",
-        issueNumber: "Issue# 15",
-        AuthorName: "Technical Solutions Team",
-        date: "April 20, 2026",
-        url: "https://cms-test.greenheck.com/resources/communications/data-center-cooling",
-        topic: ["Case Study", "Data Center"],
-        productCategory: ["Cooling", "Software"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["Data Center", "Cooling", "Case Study"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
-      },
-      {
-        title: "New Product: Smart Ventilation Controls",
-        communicationType: "Product Update",
-        summary:
-          "Introducing our new line of smart ventilation controls with IoT integration and advanced monitoring capabilities.",
-        issueNumber: "Issue# 16",
-        AuthorName: "Product Development Team",
-        date: "May 8, 2026",
-        url: "https://cms-test.greenheck.com/resources/communications/smart-ventilation-controls",
-        topic: ["Product Launch", "IoT"],
-        productCategory: ["Ventilation"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["IoT", "Smart Controls", "Ventilation"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
-      },
-      {
-        title: "Technical Bulletin: Air Quality Monitoring",
-        communicationType: "Technical Update",
-        summary:
-          "Updated guidelines for air quality monitoring in commercial buildings and best practices for maintaining optimal indoor air quality.",
-        issueNumber: "Issue# 17",
-        AuthorName: "Technical Services",
-        date: "June 15, 2026",
-        url: "https://cms-test.greenheck.com/resources/communications/air-quality-monitoring",
-        topic: ["Technical", "Air Quality"],
-        productCategory: ["Monitoring", "Ventilation"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["IAQ", "Monitoring", "Technical"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
-      },
-      {
-        title: "Case Study: Office Building",
-        communicationType: "Case Study",
-        summary:
-          "How our ventilation solutions improved indoor air quality and energy efficiency in a modern office building.",
-        issueNumber: "Issue# 48",
-        AuthorName: "Commercial Solutions Team",
-        date: "January 22, 2029",
-        url: "https://cms-test.greenheck.com/resources/communications/office-building",
-        topic: ["Technical", "Commissioning"],
-        productCategory: ["Performance"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["Office", "Ventilation", "Case Study"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
-      },
-      {
-        title: "New Product: Energy Recovery Ventilators",
-        communicationType: "Product Update",
-        summary:
-          "Introducing our new line of energy recovery ventilators with enhanced heat exchange efficiency and reduced energy consumption.",
-        issueNumber: "Issue# 49",
-        AuthorName: "Product Development Team",
-        date: "February 10, 2029",
-        url: "https://cms-test.greenheck.com/resources/communications/energy-recovery-ventilators",
-        topic: ["Case Study", "Commercial"],
-        productCategory: ["Ventilation", "Performance"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["Energy", "Recovery", "Ventilation"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
-      },
-      {
-        title: "Technical Bulletin: System Maintenance",
-        communicationType: "Technical Update",
-        summary:
-          "Updated guidelines for system maintenance and service intervals to ensure optimal performance and longevity.",
-        issueNumber: "Issue# 50",
-        AuthorName: "Technical Services",
-        date: "March 5, 2029",
-        url: "https://cms-test.greenheck.com/resources/communications/system-maintenance",
-        topic: ["Product Launch", "Energy Efficiency"],
-        productCategory: ["Energy Recovery", "Ventilation"],
-        Category: [
-          {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
-          }
-        ],
-        Tags: ["Maintenance", "Technical", "Service"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
       }
     ];
 
@@ -1085,6 +1048,9 @@ class CommunicationApp {
     // Create and render filter components
     this.createFilters();
 
+    // Setup sort dropdown
+    this.setupSortDropdown();
+
     // Initial render of cards
     this.updateDisplay();
 
@@ -1105,14 +1071,20 @@ class CommunicationApp {
   }
 
   createFilters() {
-    const topics = this.dataService.getUniqueValues("topic");
-    const productCategories = this.dataService.getUniqueValues("productCategory");
-    const communicationTypes = this.dataService.getUniqueValues("communicationType");
-
     // Clear filters container
     this.filtersContainer.innerHTML = "";
 
-    // Create filter components
+    // Create timeframe filter
+    new FilterComponent(
+      "Timeframe",
+      this.dataService.getTimeframes(),
+      this.filtersContainer,
+      this.handleFilterChange.bind(this),
+      "dropdown" // Specify dropdown style
+    ).render();
+
+    // Create existing filter components
+    const topics = this.dataService.getUniqueValues("topic");
     new FilterComponent(
       "Topics",
       topics,
@@ -1120,6 +1092,7 @@ class CommunicationApp {
       this.handleFilterChange.bind(this)
     ).render();
 
+    const productCategories = this.dataService.getUniqueValues("productCategory");
     new FilterComponent(
       "Product Categories",
       productCategories,
@@ -1127,6 +1100,7 @@ class CommunicationApp {
       this.handleFilterChange.bind(this)
     ).render();
 
+    const communicationTypes = this.dataService.getUniqueValues("communicationType");
     new FilterComponent(
       "Communication Type",
       communicationTypes,
@@ -1135,8 +1109,15 @@ class CommunicationApp {
     ).render();
   }
 
-  handleFilterChange(filterType, value, isChecked) {
-    this.dataService.updateFilter(filterType, value, isChecked);
+  handleFilterChange(filterType, value, isActive) {
+    // For dropdown filters like timeframe, isActive is undefined and value contains the selected option
+    if (filterType.toLowerCase() === "timeframe") {
+      this.dataService.activeFilters.timeframe = value;
+      this.dataService.applyFilters();
+    } else {
+      // For checkbox filters, use the existing updateFilter method
+      this.dataService.updateFilter(filterType, value, isActive);
+    }
     this.cardList.resetPagination();
     this.updateDisplay();
   }
@@ -1195,6 +1176,17 @@ class CommunicationApp {
         listViewBtn.classList.add("active");
         gridViewBtn.classList.remove("active");
         this.cardsContainer.classList.add("list-view");
+        this.updateDisplay();
+      });
+    }
+  }
+
+  setupSortDropdown() {
+    const sortDropdown = document.getElementById("sort-by");
+    if (sortDropdown) {
+      sortDropdown.addEventListener("change", e => {
+        this.dataService.setSortOrder(e.target.value);
+        this.cardList.resetPagination();
         this.updateDisplay();
       });
     }
