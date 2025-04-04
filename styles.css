@@ -190,7 +190,10 @@
   align-items: center;
   justify-content: space-between;
 }
-
+.results-count-text {
+  width: 230px;
+  height: 30px;
+}
 /* Load More Button */
 .load-more-container {
   align-items: center;
@@ -757,7 +760,7 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 10px;
+  flex: 1;
 }
 
 .selected-filter {
