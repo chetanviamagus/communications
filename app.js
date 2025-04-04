@@ -920,150 +920,604 @@ class CommunicationApp {
 
     this.data = [
       {
-        title: "Last Week Test Communication",
-        communicationType: "Bulletin",
-        summary: "This is a test communication from last week",
-        issueNumber: "Issue# 1",
-        date: "2025-04-4",
-        topic: ["Test Topic"],
-        productCategory: ["Test Category"],
+        title: "Motor Application Guide for Ventilation Products",
+        communicationType: "Technical Guide",
+        summary:
+          "Comprehensive guide for selecting proper motors to prevent common fan application issues",
+        issueNumber: "Issue# GH-2025-01",
+        AuthorName: "Greenheck Engineering Team",
+        date: "2025-03-15",
+        url: "https://www.greenheck.com/resources/motor-application-guide",
+        topic: ["HVAC Engineering", "Fan Design"],
+        productCategory: ["Fans", "Motors"],
+        Category: [
+          {
+            Id: "tech-001",
+            Title: "Technical Resources"
+          }
+        ],
+        Tags: ["Motors", "Application Guide", "HVAC"],
         imageUrl:
           "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
       },
       {
-        title: "Last Month Test Communication",
-        communicationType: "CAPS Update",
-        summary: "This is a test communication from last month",
-        issueNumber: "Issue# 2",
-        date: "2025-03-01",
-        topic: ["Test Topic"],
-        productCategory: ["Test Category"],
+        title: "Ceiling Radiation Dampers: 2025 Compliance Update",
+        communicationType: "Regulatory Bulletin",
+        summary: "Latest updates on UL and IBC requirements for ceiling radiation dampers",
+        issueNumber: "Issue# GH-2025-02",
+        AuthorName: "Regulatory Compliance Team",
+        date: "2025-03-10",
+        url: "https://www.greenheck.com/resources/damper-compliance-2025",
+        topic: ["Life Safety", "Building Codes"],
+        productCategory: ["Dampers", "Fire Protection"],
+        Category: [
+          {
+            Id: "reg-002",
+            Title: "Compliance Updates"
+          }
+        ],
+        Tags: ["UL", "IBC", "Fire Safety"],
         imageUrl:
           "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
       },
       {
-        title: "Last 3 Months Test Communication",
-        communicationType: "Technical Update",
-        summary: "This is a test communication from 3 months ago",
-        issueNumber: "Issue# 3",
+        title: "AFL-601 Louver Nominated for CSE Product of the Year",
+        communicationType: "Award Announcement",
+        summary: "Our wind-driven rain louver recognized in Consulting-Specifying Engineer awards",
+        issueNumber: "Issue# GH-2025-03",
+        AuthorName: "Marketing Communications",
+        date: "2025-02-28",
+        url: "https://www.greenheck.com/news/afl-601-nomination",
+        topic: ["Product Recognition", "Industry Awards"],
+        productCategory: ["Louvers", "FEMA Products"],
+        Category: [
+          {
+            Id: "news-003",
+            Title: "Company News"
+          }
+        ],
+        Tags: ["Awards", "HVAC", "FEMA"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Fan Energy Index State Adoption Tracker",
+        communicationType: "Regulatory Update",
+        summary: "Interactive map showing FEI requirements by state with compliance resources",
+        issueNumber: "Issue# GH-2025-04",
+        AuthorName: "Energy Compliance Team",
+        date: "2025-02-20",
+        url: "https://www.greenheck.com/resources/fei-tracker",
+        topic: ["Energy Codes", "Compliance"],
+        productCategory: ["Fans", "Regulatory Updates"],
+        Category: [
+          {
+            Id: "reg-002",
+            Title: "Compliance Updates"
+          }
+        ],
+        Tags: ["ASHRAE 90.1", "FEI", "Energy Codes"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "VFD Overspeeding Technical White Paper",
+        communicationType: "Technical Report",
+        summary: "Research findings on the benefits of overspeeding with variable frequency drives",
+        issueNumber: "Issue# GH-2025-05",
+        AuthorName: "Dr. Robert Henderson",
+        date: "2025-02-15",
+        url: "https://www.greenheck.com/resources/vfd-overspeeding",
+        topic: ["Motor Control", "Technical Research"],
+        productCategory: ["VFDs", "Fan Motors"],
+        Category: [
+          {
+            Id: "tech-001",
+            Title: "Technical Resources"
+          }
+        ],
+        Tags: ["Engineering", "HVAC", "Motors"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "eCAPS 5.2 Release Notes",
+        communicationType: "Software Update",
+        summary: "New FEI calculation tools and enhanced fan selection capabilities",
+        issueNumber: "Issue# GH-2025-06",
+        AuthorName: "Software Development Team",
+        date: "2025-02-10",
+        url: "https://www.greenheck.com/resources/ecaps-5.2",
+        topic: ["Software Tools", "Energy Compliance"],
+        productCategory: ["Selection Software", "Fans"],
+        Category: [
+          {
+            Id: "soft-004",
+            Title: "Software Updates"
+          }
+        ],
+        Tags: ["eCAPS", "FEI", "ASHRAE"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "FEI Application Guide 2025 Edition",
+        communicationType: "Technical Guide",
+        summary: "Complete reference for Fan Energy Index calculations and selection methodology",
+        issueNumber: "Issue# GH-2025-07",
+        AuthorName: "Energy Efficiency Team",
+        date: "2025-02-05",
+        url: "https://www.greenheck.com/resources/fei-guide",
+        topic: ["Technical Research", "Engineering Resources"],
+        productCategory: ["Technical Guides", "Fans"],
+        Category: [
+          {
+            Id: "tech-001",
+            Title: "Technical Resources"
+          }
+        ],
+        Tags: ["FEI", "AMCA", "Energy Savings"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Understanding Fan Energy Index (Webinar Recap)",
+        communicationType: "Educational Resource",
+        summary: "Recording and slides from our popular FEI educational webinar",
+        issueNumber: "Issue# GH-2025-08",
+        AuthorName: "Educational Outreach",
+        date: "2025-01-30",
+        url: "https://www.greenheck.com/resources/fei-webinar",
+        topic: ["Educational Content", "HVAC Basics"],
+        productCategory: ["Educational Resources", "Fans"],
+        Category: [
+          {
+            Id: "edu-005",
+            Title: "Educational Content"
+          }
+        ],
+        Tags: ["FEI", "ASHRAE", "AHRI"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "2025 Engineers Week Spotlight: Jordan Locher",
+        communicationType: "Employee Feature",
+        summary: "Celebrating our engineers during National Engineers Week 2025",
+        issueNumber: "Issue# GH-2025-09",
+        AuthorName: "HR Communications",
+        date: "2025-02-18",
+        url: "https://www.greenheck.com/careers/engineer-spotlight",
+        topic: ["Engineering", "Company Culture"],
+        productCategory: [],
+        Category: [
+          {
+            Id: "news-003",
+            Title: "Company News"
+          }
+        ],
+        Tags: ["Eweek2025", "Engineering", "Design"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Vari-Green Drive Technology Update",
+        communicationType: "Product Update",
+        summary: "Next-generation energy saving technology for ventilation systems",
+        issueNumber: "Issue# GH-2025-15",
+        AuthorName: "Product Development",
+        date: "2025-01-25",
+        url: "https://www.greenheck.com/products/vari-green-update",
+        topic: ["Energy Efficiency", "Product Innovation"],
+        productCategory: ["Drives", "Energy Saving Products"],
+        Category: [
+          {
+            Id: "prod-006",
+            Title: "Product Updates"
+          }
+        ],
+        Tags: ["VFD", "Motors", "Energy Savings"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "New AER Sidewall Propeller Fan Launch",
+        communicationType: "Product Launch",
+        summary:
+          "Introducing our most advanced small direct drive fan with 15% efficiency improvement",
+        issueNumber: "Issue# GH-2025-11",
+        AuthorName: "Product Development Team",
+        date: "2025-01-20",
+        url: "https://www.greenheck.com/products/aer-fan",
+        topic: ["Product Innovation", "Fan Technology"],
+        productCategory: ["Propeller Fans", "Direct Drive Fans"],
+        Category: [
+          {
+            Id: "prod-006",
+            Title: "Product Updates"
+          }
+        ],
+        Tags: ["Innovation", "HVAC", "Fans"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "EQD Mixed Flow Fan with Vari-Green Motor",
+        communicationType: "Product Bulletin",
+        summary: "New energy-saving model featuring patent-pending octagonal housing design",
+        issueNumber: "Issue# GH-2025-12",
+        AuthorName: "Engineering Department",
         date: "2025-01-15",
-        topic: ["Test Topic"],
-        productCategory: ["Test Category"],
+        url: "https://www.greenheck.com/products/eqd-mixed-flow",
+        topic: ["Product Innovation", "Energy Efficiency"],
+        productCategory: ["Inline Fans", "Mixed Flow Fans"],
+        Category: [
+          {
+            Id: "prod-006",
+            Title: "Product Updates"
+          }
+        ],
+        Tags: ["Direct Drive", "Energy Efficient", "HVAC"],
         imageUrl:
           "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
       },
       {
-        title: "Last 6 Months Test Communication",
-        communicationType: "REP Update",
-        summary: "This is a test communication from 6 months ago",
-        issueNumber: "Issue# 4",
+        title: "Global Manufacturing Expansion Update Q1 2025",
+        communicationType: "Corporate Update",
+        summary: "Progress report on new facilities in Wisconsin, North Carolina, Mexico and India",
+        issueNumber: "Issue# GH-2025-13",
+        AuthorName: "Corporate Communications",
+        date: "2025-01-10",
+        url: "https://www.greenheck.com/about/expansion",
+        topic: ["Company Growth", "Manufacturing"],
+        productCategory: [],
+        Category: [
+          {
+            Id: "corp-007",
+            Title: "Corporate News"
+          }
+        ],
+        Tags: ["Global", "Manufacturing", "Expansion"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Schofield Facility Community Impact Report",
+        communicationType: "Community Update",
+        summary: "2024 annual review of local partnerships and workforce development initiatives",
+        issueNumber: "Issue# GH-2025-14",
+        AuthorName: "Community Relations",
+        date: "2025-01-05",
+        url: "https://www.greenheck.com/community/schofield",
+        topic: ["Community Engagement", "Corporate Responsibility"],
+        productCategory: [],
+        Category: [
+          {
+            Id: "corp-007",
+            Title: "Corporate News"
+          }
+        ],
+        Tags: ["Wisconsin", "Community", "Partnerships"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Fire Damper Installation Best Practices",
+        communicationType: "Technical Bulletin",
+        summary: "Updated guidelines for proper fire damper installation per 2025 IBC requirements",
+        issueNumber: "Issue# GH-2025-15",
+        AuthorName: "Technical Services",
+        date: "2024-12-15",
+        url: "https://www.greenheck.com/resources/fire-damper-install",
+        topic: ["Life Safety", "Installation Guidelines"],
+        productCategory: ["Fire Dampers", "Building Safety"],
+        Category: [
+          {
+            Id: "tech-001",
+            Title: "Technical Resources"
+          }
+        ],
+        Tags: ["UL", "IBC", "Fire Protection"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Energy Recovery Ventilator Maintenance Guide",
+        communicationType: "Technical Manual",
+        summary: "Comprehensive maintenance procedures for maximizing ERV system performance",
+        issueNumber: "Issue# GH-2025-16",
+        AuthorName: "Technical Publications",
+        date: "2024-12-10",
+        url: "https://www.greenheck.com/resources/erv-maintenance",
+        topic: ["Preventive Maintenance"],
+        productCategory: ["ERVs", "Ventilation Systems"],
+        Category: [
+          {
+            Id: "tech-001",
+            Title: "Technical Resources"
+          }
+        ],
+        Tags: ["Maintenance", "Filters", "Heat Exchangers"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Commercial Kitchen Ventilation Design Webinar",
+        communicationType: "Educational Event",
+        summary: "Recording available: Best practices for commercial kitchen HVAC system design",
+        issueNumber: "Issue# GH-2025-17",
+        AuthorName: "Educational Services",
+        date: "2024-12-05",
+        url: "https://www.greenheck.com/resources/kitchen-vent-webinar",
+        topic: ["Commercial Kitchens", "Ventilation Design"],
+        productCategory: ["Kitchen Hoods", "Exhaust Systems"],
+        Category: [
+          {
+            Id: "edu-005",
+            Title: "Educational Content"
+          }
+        ],
+        Tags: ["NFPA 96", "Design", "Webinar"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "2025 ASHRAE Winter Conference Recap",
+        communicationType: "Event Summary",
+        summary: "Key takeaways from new research presented at ASHRAE's annual winter meeting",
+        issueNumber: "Issue# GH-2025-18",
+        AuthorName: "Technical Marketing",
+        date: "2024-11-30",
+        url: "https://www.greenheck.com/news/ashrae-2025-recap",
+        topic: ["Industry Events", "Research Updates"],
+        productCategory: [],
+        Category: [
+          {
+            Id: "news-003",
+            Title: "Company News"
+          }
+        ],
+        Tags: ["ASHRAE", "Conference", "Research"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Laboratory Exhaust System Case Study",
+        communicationType: "Application Note",
+        summary: "University research lab retrofit with energy-saving exhaust system design",
+        issueNumber: "Issue# GH-2025-19",
+        AuthorName: "Applications Engineering",
+        date: "2024-11-20",
+        url: "https://www.greenheck.com/resources/lab-exhaust-case-study",
+        topic: ["Case Studies", "Laboratory Ventilation"],
+        productCategory: ["Lab Exhaust", "Energy Recovery"],
+        Category: [
+          {
+            Id: "app-008",
+            Title: "Application Notes"
+          }
+        ],
+        Tags: ["University", "Retrofit", "Energy Savings"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "New UL Listing for Smoke Damper Series",
+        communicationType: "Certification Update",
+        summary: "Five new models added to UL 555S listed smoke damper product line",
+        issueNumber: "Issue# GH-2025-20",
+        AuthorName: "Regulatory Affairs",
+        date: "2024-11-15",
+        url: "https://www.greenheck.com/products/smoke-dampers-ul",
+        topic: ["Certifications", "Life Safety"],
+        productCategory: ["Smoke Dampers", "Fire Protection"],
+        Category: [
+          {
+            Id: "reg-002",
+            Title: "Compliance Updates"
+          }
+        ],
+        Tags: ["UL 555S", "Listing", "Fire Safety"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Make-Up Air Unit Winter Operation Guide",
+        communicationType: "Seasonal Bulletin",
+        summary: "Recommended settings and maintenance for cold weather MAU operation",
+        issueNumber: "Issue# GH-2025-21",
+        AuthorName: "Technical Support",
+        date: "2024-11-10",
+        url: "https://www.greenheck.com/resources/mau-winter-guide",
+        topic: ["Seasonal Maintenance", "Make-Up Air"],
+        productCategory: ["MAUs", "Heating Systems"],
+        Category: [
+          {
+            Id: "tech-001",
+            Title: "Technical Resources"
+          }
+        ],
+        Tags: ["Winter", "Freeze Protection", "HVAC"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Indoor Air Quality White Paper 2025",
+        communicationType: "Research Report",
+        summary: "Latest findings on IAQ improvements through advanced ventilation strategies",
+        issueNumber: "Issue# GH-2025-22",
+        AuthorName: "Research Team",
+        date: "2024-11-05",
+        url: "https://www.greenheck.com/resources/iaq-white-paper",
+        topic: ["IAQ", "Ventilation Research"],
+        productCategory: ["Ventilation Systems", "Air Quality"],
+        Category: [
+          {
+            Id: "res-009",
+            Title: "Research Publications"
+          }
+        ],
+        Tags: ["IAQ", "Study", "Ventilation"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Fan Array System Design Guide",
+        communicationType: "Application Manual",
+        summary: "Comprehensive guide to designing and specifying fan array systems",
+        issueNumber: "Issue# GH-2025-23",
+        AuthorName: "Applications Engineering",
+        date: "2024-10-28",
+        url: "https://www.greenheck.com/resources/fan-array-guide",
+        topic: ["System Design", "HVAC Applications"],
+        productCategory: ["Fan Systems", "HVAC Systems"],
+        Category: [
+          {
+            Id: "app-008",
+            Title: "Application Notes"
+          }
+        ],
+        Tags: ["Design", "Redundancy", "VFD"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "Sustainability Report 2024",
+        communicationType: "Corporate Report",
+        summary: "Annual sustainability report detailing environmental initiatives and progress",
+        issueNumber: "Issue# GH-2025-24",
+        AuthorName: "Sustainability Office",
+        date: "2024-10-20",
+        url: "https://www.greenheck.com/about/sustainability-2024",
+        topic: ["Sustainability", "Corporate Responsibility"],
+        productCategory: [],
+        Category: [
+          {
+            Id: "corp-007",
+            Title: "Corporate News"
+          }
+        ],
+        Tags: ["ESG", "Recycling", "Energy Efficiency"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "New BIM Files for Vane Axial Fans",
+        communicationType: "Design Resource",
+        summary: "Updated Revit families for complete vane axial fan product line",
+        issueNumber: "Issue# GH-2025-25",
+        AuthorName: "BIM Team",
         date: "2024-10-15",
-        topic: ["Test Topic"],
-        productCategory: ["Test Category"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
-      },
-      {
-        title: "Last 9 Months Test Communication",
-        communicationType: "Insights",
-        summary: "This is a test communication from 9 months ago",
-        issueNumber: "Issue# 5",
-        date: "2024-07-10",
-        topic: ["Test Topic"],
-        productCategory: ["Test Category"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
-      },
-      {
-        title: "Last Year Test Communication",
-        communicationType: "Bulletin",
-        summary: "This is a test communication from last year",
-        issueNumber: "Issue# 6",
-        date: "2024-04-15",
-        topic: ["Test Topic"],
-        productCategory: ["Test Category"],
-        imageUrl:
-          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
-      },
-      {
-        title: "Consulting-Specifying Engineer Product of the Year: AFL-601 Nomination",
-        communicationType: "Bulletin",
-        summary:
-          "The AFL-601 Wind-Driven Rain FEMA Louver is a nominee for the Consulting-Specifying Engineer (CSE) Product of the Year awards in the HVAC category—and we need your vote to win!",
-        issueNumber: "Issue# 1",
-        AuthorName: "John Smith",
-        date: "2024-02-05",
-        url: "https://cms-test.greenheck.com/resources/communications/consulting-specifying-engineer-product-of-the-year--afl-601-nomination",
-        topic: ["Industry Awards", "Product Recognition"],
-        productCategory: ["AFL-601", "Louvers"],
+        url: "https://www.greenheck.com/resources/bim-vane-axial",
+        topic: ["BIM", "Design Tools"],
+        productCategory: ["Vane Axial Fans", "BIM Objects"],
         Category: [
           {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
+            Id: "des-010",
+            Title: "Design Resources"
           }
         ],
-        Tags: ["FEMA", "HVAC", "Awards"],
+        Tags: ["Revit", "BIM", "CAD"],
         imageUrl:
           "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
       },
       {
-        title: "New Energy Recovery Ventilator Series Launch",
-        communicationType: "CAPS Update",
-        summary:
-          "Introducing our new line of Energy Recovery Ventilators featuring advanced heat exchange technology.",
-        issueNumber: "Issue# 2",
-        AuthorName: "Sarah Johnson",
-        date: "2023-12-10",
-        url: "https://cms-test.greenheck.com/resources/communications/new-energy-recovery-ventilator-series",
-        topic: ["Product Innovation", "Energy Solutions"],
-        productCategory: ["ERV", "Ventilation Systems"],
+        title: "Acoustical Performance Testing Results",
+        communicationType: "Test Report",
+        summary: "2025 AMCA-certified sound performance data for centrifugal fan series",
+        issueNumber: "Issue# GH-2025-26",
+        AuthorName: "Testing Laboratory",
+        date: "2024-10-10",
+        url: "https://www.greenheck.com/resources/acoustical-testing",
+        topic: ["Acoustics", "Performance Data"],
+        productCategory: ["Centrifugal Fans", "Sound Ratings"],
         Category: [
           {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
+            Id: "test-011",
+            Title: "Test Reports"
           }
         ],
-        Tags: ["HVAC", "Sustainability", "Innovation"],
+        Tags: ["AMCA", "Sound Power", "dB"],
         imageUrl:
           "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
       },
       {
-        title: "Technical Bulletin: Fan Performance Optimization",
-        communicationType: "Technical Update",
-        summary: "Latest findings on fan performance optimization techniques and best practices.",
-        issueNumber: "Issue# 3",
-        AuthorName: "Michael Chen",
-        date: "2022-06-15",
-        url: "https://cms-test.greenheck.com/resources/communications/fan-performance-optimization",
-        topic: ["Technical Research", "System Optimization"],
-        productCategory: ["Fans", "Performance Equipment"],
+        title: "Hurricane Rated Louver Certification",
+        communicationType: "Product Update",
+        summary: "New Miami-Dade County approval for wind-driven rain louver series",
+        issueNumber: "Issue# GH-2025-27",
+        AuthorName: "Product Management",
+        date: "2024-10-05",
+        url: "https://www.greenheck.com/products/hurricane-louver",
+        topic: ["Certifications", "Storm Protection"],
+        productCategory: ["Louvers", "FEMA Products"],
         Category: [
           {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
+            Id: "prod-006",
+            Title: "Product Updates"
           }
         ],
-        Tags: ["Technical", "Performance", "Maintenance"],
+        Tags: ["Miami-Dade", "Wind Rating", "NOAA"],
         imageUrl:
           "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
       },
       {
-        title: "Industry Standards Update: ASHRAE 2024",
-        communicationType: "REP Update",
-        summary: "Overview of the latest ASHRAE standards and their impact.",
-        issueNumber: "Issue# 4",
-        AuthorName: "Emily Rodriguez",
-        date: "2022-03-20",
-        url: "https://cms-test.greenheck.com/resources/communications/ashrae-2024-update",
-        topic: ["Industry Standards", "Regulatory Updates"],
-        productCategory: ["Compliance Systems", "Standards Implementation"],
+        title: "Data Center Ventilation Strategies",
+        communicationType: "Application Guide",
+        summary: "Optimized cooling approaches for modern high-density data centers",
+        issueNumber: "Issue# GH-2025-28",
+        AuthorName: "Critical Environments Team",
+        date: "2024-09-28",
+        url: "https://www.greenheck.com/resources/data-center-ventilation",
+        topic: ["Data Centers", "Cooling Strategies"],
+        productCategory: ["Critical HVAC", "Ventilation Systems"],
         Category: [
           {
-            Id: "124b2e5e-5425-401e-a779-1ed158167901",
-            Title: "Communications"
+            Id: "app-008",
+            Title: "Application Notes"
           }
         ],
-        Tags: ["ASHRAE", "Standards", "Compliance"],
+        Tags: ["PUE", "Cooling", "Server Rooms"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "LEED v4.1 Contribution Guidelines",
+        communicationType: "Sustainability Guide",
+        summary: "How Greenheck products contribute to LEED v4.1 certification projects",
+        issueNumber: "Issue# GH-2025-29",
+        AuthorName: "Sustainability Office",
+        date: "2024-09-20",
+        url: "https://www.greenheck.com/resources/leed-guidelines",
+        topic: ["LEED Certification", "Green Building"],
+        productCategory: ["Sustainable Products"],
+        Category: [
+          {
+            Id: "sus-012",
+            Title: "Sustainability Resources"
+          }
+        ],
+        Tags: ["USGBC", "LEED", "Green Building"],
+        imageUrl:
+          "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
+      },
+      {
+        title: "2025 Product Catalog Now Available",
+        communicationType: "Marketing Publication",
+        summary: "Digital and print versions of our complete 2025 product catalog",
+        issueNumber: "Issue# GH-2025-30",
+        AuthorName: "Marketing Communications",
+        date: "2024-09-15",
+        url: "https://www.greenheck.com/resources/2025-catalog",
+        topic: ["Product Information", "Resources"],
+        productCategory: [],
+        Category: [
+          {
+            Id: "mar-013",
+            Title: "Marketing Materials"
+          }
+        ],
+        Tags: ["Catalog", "Product Guide", "Reference"],
         imageUrl:
           "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg"
       }
