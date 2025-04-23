@@ -176,13 +176,19 @@
       .fa-times:before {
         content: "\f00d";
       }
+      .fa-minus:before {
+        content: "\f068";
+      }
+      .fa-plus:before {
+        content: "\f067";
+      }
       .active .fa-list-ul:before,
       .active .fa-th-large:before {
         color: var(--secondary-color);
       }
       ::-webkit-input-placeholder {
         font-size: 13px !important;
-        font-family: "Helvetica";
+        font-family: "Helvetica", sans-serif;
         font-weight: 500;
       }
       /* Common Styles */
@@ -295,6 +301,9 @@
         flex: 0 0 287px;
         margin-right: 31px;
         padding-top: 11px;
+        transition:
+          max-height 0.3s ease-in-out,
+          opacity 0.2s ease-in-out;
       }
 
       .content {
@@ -377,7 +386,9 @@
       }
 
       .sort-container select {
-        background-color: #f2f2f2;
+        background: #f2f2f2 url(/Content/GreenheckStyles/imgs/grey-triangle.png) no-repeat right;
+        background-size: 20px;
+        background-position-x: 94%;
         border: 1px solid var(--border-color);
         border-radius: var(--border-radius-large);
         box-shadow: var(--dropdown-shadow);
@@ -390,11 +401,9 @@
         height: 40px;
         width: 210px;
         transition: var(--transition-normal);
-        background: url(/Content/GreenheckStyles/imgs/grey-triangle.png) no-repeat right;
+        appearance: none;
         -moz-appearance: none;
         -webkit-appearance: none;
-        background-size: 20px;
-        background-position-x: 94%;
       }
 
       .sort-container select:hover {
@@ -437,6 +446,25 @@
         flex-direction: column;
         gap: 34px;
       }
+      .view-archived-communications-link {
+        color: var(--secondary-color);
+        font-family: var(--font-primary);
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 18px;
+        text-decoration: none;
+        transition: var(--transition-normal);
+        border: 1px solid var(--secondary-color);
+        padding: 10px 20px;
+        margin-top: 50px;
+        margin-bottom: 40px;
+        display: inline-block;
+        width: 100%;
+      }
+      .view-archived-communications-link:hover {
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+      }
       .filter-section {
         margin-bottom: 0;
         padding-bottom: 0;
@@ -473,7 +501,7 @@
       .filter-list li {
         align-items: center;
         display: flex;
-        gap: 0;
+        gap: 4px;
       }
 
       .filter-list label {
@@ -933,7 +961,15 @@
           width: 90%;
           padding: 15px;
         }
-
+        .communications-main-content {
+          display: flex;
+          flex-wrap: wrap;
+          flex-direction: column;
+        }
+        .filter-list {
+          flex-wrap: wrap;
+          flex-direction: row;
+        }
         /* Tablet container styles */
         #tablet-layout-container {
           display: flex;
@@ -1035,6 +1071,55 @@
           padding: 10px;
         }
       }
+
+      /* Filter Toggle Button Styles */
+      .filter-toggle-btn {
+        display: none;
+        width: 100%;
+        padding: 12px 16px;
+        background: var(--secondary-color);
+        font-family: var(--font-bold);
+        font-size: 18px;
+        color: var(--text-white);
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition-normal);
+        margin-bottom: 1rem;
+        gap: 10px;
+        border: 0;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .filter-toggle-btn:hover {
+        background: var(--primary-color);
+      }
+
+      .filter-toggle-btn i {
+        transition: transform 0.2s ease-in-out;
+      }
+
+      .filter-toggle-btn.filters-hidden i {
+        transform: rotate(180deg);
+      }
+
+      .communications-sidebar.hidden {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
+
+      /* Tablet Layout Styles */
+      @media (max-width: 1023px) {
+        .filter-toggle-btn {
+          display: flex;
+        }
+
+        .communications-sidebar:not(.hidden) {
+          max-height: 2000px;
+          opacity: 1;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1061,6 +1146,11 @@
       </div>
 
       <div class="communications-main-content">
+        <!-- Filter Toggle Button -->
+        <button class="filter-toggle-btn">
+          <span>Show Filters</span>
+          <i class="fas fa-plus"></i>
+        </button>
         <aside class="communications-sidebar">
           <!-- Search Section -->
           <div id="search-container" class="communications-search-container">
@@ -1103,12 +1193,24 @@
             </template>
 
             <template id="checkbox-option-template">
-              <li>
-                <input type="checkbox" />
-                <label></label>
-              </li>
+              <fieldset>
+                <ul class="filter-list">
+                  <li>
+                    <input type="checkbox" />
+                    <label></label>
+                  </li>
+                </ul>
+              </fieldset>
             </template>
           </div>
+          <!-- View archived communications prior to January 2025: link -->
+          <a
+            class="view-archived-communications-link"
+            href="#"
+            aria-label="View archived communications from before January 2025"
+          >
+            View Archived Communications
+          </a>
         </aside>
 
         <main class="content">
@@ -1116,7 +1218,7 @@
           <template id="product-card-template">
             <article class="product-card">
               <div class="product-image">
-                <img loading="lazy" />
+                <img loading="lazy" alt="loading" />
               </div>
               <div class="product-info">
                 <h3 class="product-title"></h3>
@@ -1132,7 +1234,7 @@
                 </div>
                 <div class="product-footer">
                   <div class="product-meta">
-                    <img class="communication-icon" />
+                    <img class="communication-icon" alt="communication-icon" />
                     <span class="communication-type"></span>
                   </div>
                   <a class="prd-btn">VIEW</a>
@@ -2495,6 +2597,8 @@
           this.resultsCountText = document.getElementById("communications-results-count-text");
           this.filteredTags = document.getElementById("filtered-tags");
           this.resultsContainer = document.querySelector(".results-count");
+          this.filtersContainer = document.querySelector(".communications-sidebar");
+          this.filterToggleBtn = document.querySelector(".filter-toggle-btn");
 
           this.mediaQuery = window.matchMedia("(max-width: 1023px)");
           this.handleTabletLayout = this.handleTabletLayout.bind(this);
@@ -2520,8 +2624,27 @@
           // Add media query listener
           this.mediaQuery.addListener(this.handleTabletLayout);
 
+          // Setup filter toggle
+          this.setupFilterToggle();
+
           // Initial check
           this.handleTabletLayout(this.mediaQuery);
+        }
+
+        setupFilterToggle() {
+          if (this.filterToggleBtn && this.filtersContainer) {
+            this.filterToggleBtn.addEventListener("click", () => {
+              const isHidden = this.filtersContainer.classList.toggle("hidden");
+              this.filterToggleBtn.classList.toggle("filters-hidden", isHidden);
+
+              // Update button text and icon
+              const buttonText = this.filterToggleBtn.querySelector("span");
+              const buttonIcon = this.filterToggleBtn.querySelector("i");
+              buttonText.textContent = isHidden ? "Show Filters" : "Hide Filters";
+              buttonIcon.classList.remove(isHidden ? "fa-minus" : "fa-plus");
+              buttonIcon.classList.add(isHidden ? "fa-plus" : "fa-minus");
+            });
+          }
         }
 
         handleTabletLayout(e) {
@@ -2540,6 +2663,12 @@
 
             // Add filtered tags
             this.tabletContainer.appendChild(this.filteredTags);
+
+            // Initially hide filters in tablet view
+            if (this.filtersContainer && this.filterToggleBtn) {
+              this.filtersContainer.classList.add("hidden");
+              this.filterToggleBtn.classList.add("filters-hidden");
+            }
           } else {
             // Desktop Layout - Restore original structure
             if (this.tabletContainer.parentElement) {
@@ -2552,6 +2681,12 @@
             this.sortContainerParent.appendChild(this.sortContainer);
             this.resultsCountParent.appendChild(this.resultsCountText);
             this.filteredTagsParent.appendChild(this.filteredTags);
+
+            // Show filters in desktop view
+            if (this.filtersContainer && this.filterToggleBtn) {
+              this.filtersContainer.classList.remove("hidden");
+              this.filterToggleBtn.classList.remove("filters-hidden");
+            }
           }
         }
       }
