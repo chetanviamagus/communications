@@ -294,7 +294,7 @@
       .communications-main-content {
         display: flex;
         flex-wrap: wrap;
-        margin-top: 31px;
+        margin-top: 26px;
       }
 
       .communications-sidebar {
@@ -318,18 +318,18 @@
       /* Page Title Styles */
       .page-title-border-bottom {
         border-bottom: 4px solid #d3d3d3;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
-        padding-bottom: 10px;
+        padding-bottom: 0px;
       }
 
       .page-title-border-bottom h1 {
         color: var(--text-dark);
         font-family: var(--font-bold);
         font-size: 40px;
-        margin: 0;
+        margin: 9px 0 0 0;
         padding: 0;
         line-height: 1.2;
       }
@@ -383,12 +383,13 @@
         align-items: center;
         justify-content: flex-end;
         margin-bottom: 20px;
+        gap: 12px;
       }
 
       .sort-container select {
         background: #f2f2f2 url(/Content/GreenheckStyles/imgs/grey-triangle.png) no-repeat right;
         background-size: 20px;
-        background-position-x: 94%;
+        background-position-x: 197px;
         border: 1px solid var(--border-color);
         border-radius: var(--border-radius-large);
         box-shadow: var(--dropdown-shadow);
@@ -397,13 +398,13 @@
         cursor: pointer;
         font-family: var(--font-primary);
         font-size: 18px;
-        padding: 5px 10px;
-        height: 40px;
-        width: 210px;
+        padding: 10px 16px;
+        width: 244px;
         transition: var(--transition-normal);
         appearance: none;
         -moz-appearance: none;
         -webkit-appearance: none;
+        height: auto;
       }
 
       .sort-container select:hover {
@@ -460,6 +461,7 @@
         margin-bottom: 40px;
         display: inline-block;
         width: 100%;
+        box-sizing: border-box;
       }
       .view-archived-communications-link:hover {
         color: var(--primary-color);
@@ -870,11 +872,10 @@
       /* Filter Dropdown Styles */
       .filter-dropdown {
         width: 100%;
-        padding: 6px 12px 10px 12px;
+        padding: 12px 15px 12px 15px;
         font-family: var(--font-primary);
         font-size: 20px;
         color: var(--text-color);
-        background-color: #f2f2f2;
         border: 1px solid var(--border-color);
         border-radius: var(--border-radius-large);
         appearance: none;
@@ -883,8 +884,10 @@
         box-shadow: var(--dropdown-shadow);
         -webkit-box-shadow: var(--dropdown-shadow);
         transition: var(--transition-normal) !important;
+        background: #f2f2f2 url(/Content/GreenheckStyles/imgs/grey-triangle.png) no-repeat right;
+        background-size: 20px;
+        background-position-x: 91%;
       }
-
       .filter-dropdown:hover {
         border-color: var(--primary-color);
       }
@@ -975,13 +978,11 @@
         overflow: hidden;
       }
       /* Responsive Styles - Consolidated */
-      @media (max-width: 1248px) {
-        .gh-container-lg {
-          max-width: 735px;
-          width: 100%;
+      @media (min-width: 1024px) and (max-width: 1246px) {
+        .communications-sidebar {
+          flex: 0 0 200px;
         }
       }
-
       @media (min-width: 768px) and (max-width: 1023px) {
         .filter-toggle-btn {
           align-items: flex-end !important;
@@ -1090,33 +1091,18 @@
       }
 
       @media (max-width: 767px) {
+        /* Main Container */
         .container {
           width: 95%;
           padding: 10px;
-        }
-        .communications-main-content {
-          margin-top: 0;
-          flex-direction: column;
-        }
-        .filter-section h2 {
-          font-size: 19px;
-        }
-
-        .communications-sidebar {
-          padding-top: 0;
-          flex: 0 0 100%;
-          margin-right: 0;
-          margin-bottom: 20px;
-        }
-
-        .content {
-          width: 100%;
         }
         .gh-container-xs {
           max-width: 332px;
           width: 100%;
           padding: 0 15px;
         }
+
+        /* Page Header */
         .page-title-border-bottom {
           padding-bottom: 12px;
           margin-bottom: 9px;
@@ -1124,31 +1110,58 @@
         .page-title-border-bottom h1 {
           font-size: 30px;
         }
-        .view-toggle {
-          display: none;
+
+        /* Main Content Layout */
+        .communications-main-content {
+          margin-top: 0;
+          flex-direction: column;
+        }
+        .content {
+          width: 100%;
         }
 
-        .sort-container select {
-          width: 100%;
-          padding: 13px 22px;
-          height: auto;
-          background-position-x: 284px;
+        /* Sidebar */
+        .communications-sidebar {
+          padding-top: 0;
+          flex: 0 0 100%;
+          margin-right: 0;
+          margin-bottom: 20px;
         }
-        .products-grid {
-          grid-template-columns: repeat(1, 1fr);
+
+        /* Filter Section */
+        .filter-section h2 {
+          font-size: 19px;
         }
         .filter-toggle-btn {
           margin-bottom: 1px;
           padding: 10px 16px;
-        }
-        .communications-search-container {
-          margin-top: 15px;
         }
         .filter-dropdown {
           padding: 12px 12px 11px 12px;
           background: #f2f2f2 url(/Content/GreenheckStyles/imgs/grey-triangle.png) no-repeat right;
           background-size: 20px;
           background-position-x: 94%;
+        }
+
+        /* Search and Sort */
+        .communications-search-container {
+          margin-top: 15px;
+        }
+        .sort-container select {
+          width: 100%;
+          padding: 13px 22px;
+          height: auto;
+          background-position-x: 284px;
+        }
+
+        /* View Controls */
+        .view-toggle {
+          display: none;
+        }
+
+        /* Product Grid */
+        .products-grid {
+          grid-template-columns: repeat(1, 1fr);
         }
       }
 
@@ -1252,7 +1265,7 @@
             href="#"
             aria-label="View archived communications from before January 2025"
           >
-            View Archived Communications
+            View archived communications prior to January 2025
           </a>
         </aside>
 
@@ -1308,6 +1321,7 @@
       </div>
     </div>
     <script>
+      // Mock Data
       var postData = [
         {
           title: "The Fast Pass and Kitchen Pass programs 4",
@@ -1439,7 +1453,10 @@
         }
       ];
 
-      // Search index service - responsible for indexing and searching data
+      // Core Services
+      // -------------
+
+      // Search Index Service - Core search functionality
       class SearchIndexService {
         constructor(data, indexSummary = false) {
           this.data = data;
@@ -1538,7 +1555,7 @@
         }
       }
 
-      // Data layer - responsible for managing and filtering data
+      // Data Service - Core data management
       class CommunicationDataService {
         constructor(rawData) {
           this.data = rawData;
@@ -1869,7 +1886,10 @@
         }
       }
 
-      // UI Components - responsible for rendering and UI interactions
+      // UI Components
+      // -------------
+
+      // Filter Component - Handles individual filter UI
       class FilterComponent {
         constructor(filterType, options, container, changeCallback, filterStyle = "checkbox") {
           this.filterType = filterType;
@@ -1971,6 +1991,7 @@
         }
       }
 
+      // Search Component - Handles search UI and interactions
       class SearchComponent {
         constructor(container, searchCallback, suggestCallback) {
           this.container = container;
@@ -2124,6 +2145,7 @@
         }
       }
 
+      // Card List Component - Handles product card display and interactions
       class CardListComponent {
         constructor(container, countElement) {
           this.container = container;
@@ -2388,7 +2410,113 @@
         }
       }
 
-      // Application Controller - coordinates between data and UI components
+      // Layout Manager - Handles responsive layout changes
+      class LayoutManager {
+        constructor() {
+          this.mainContainer = document.querySelector(".gh-container-xl");
+          this.titleContainer = document.getElementById("communications-page-title-container");
+          this.sortContainer = document.getElementById("communications-sort-container");
+          this.resultsCountText = document.getElementById("communications-results-count-text");
+          this.filteredTags = document.getElementById("filtered-tags");
+          this.resultsContainer = document.querySelector(".results-count");
+          this.filtersContainer = document.querySelector(".communications-sidebar");
+          this.filterToggleBtn = document.querySelector(".filter-toggle-btn");
+
+          this.mediaQuery = window.matchMedia("(max-width: 1023px)");
+          this.handleTabletLayout = this.handleTabletLayout.bind(this);
+
+          // Create containers
+          this.tabletContainer = document.createElement("div");
+          this.tabletContainer.id = "tablet-layout-container";
+
+          this.secondRowContainer = document.createElement("div");
+          this.secondRowContainer.className = "second-row-container";
+
+          // Initialize
+          this.init();
+        }
+
+        init() {
+          // Store original parent elements for restoration
+          this.titleContainerParent = this.titleContainer.parentElement;
+          this.sortContainerParent = this.sortContainer.parentElement;
+          this.resultsCountParent = this.resultsCountText.parentElement;
+          this.filteredTagsParent = this.filteredTags.parentElement;
+
+          // Add media query listener
+          this.mediaQuery.addListener(this.handleTabletLayout);
+
+          // Setup filter toggle
+          this.setupFilterToggle();
+
+          // Initial check
+          this.handleTabletLayout(this.mediaQuery);
+        }
+
+        setupFilterToggle() {
+          if (this.filterToggleBtn && this.filtersContainer) {
+            this.filterToggleBtn.addEventListener("click", () => {
+              const isHidden = this.filtersContainer.classList.toggle("hidden");
+              this.filterToggleBtn.classList.toggle("filters-hidden", isHidden);
+
+              // Update button text and icon
+              const buttonText = this.filterToggleBtn.querySelector("span");
+              const buttonIcon = this.filterToggleBtn.querySelector("i");
+              buttonText.textContent = isHidden ? "Show Filters" : "Hide Filters";
+              buttonIcon.classList.remove(isHidden ? "fa-minus" : "fa-plus");
+              buttonIcon.classList.add(isHidden ? "fa-plus" : "fa-minus");
+            });
+          }
+        }
+
+        handleTabletLayout(e) {
+          if (e.matches) {
+            // Tablet Layout
+            // Insert tablet container at the start of main container
+            this.mainContainer.insertBefore(this.tabletContainer, this.mainContainer.firstChild);
+
+            // Move elements into tablet container
+            this.tabletContainer.appendChild(this.titleContainer);
+
+            // Setup second row
+            this.secondRowContainer.appendChild(this.resultsCountText);
+            this.secondRowContainer.appendChild(this.sortContainer);
+            this.tabletContainer.appendChild(this.secondRowContainer);
+
+            // Add filtered tags
+            this.tabletContainer.appendChild(this.filteredTags);
+
+            // Initially hide filters in tablet view
+            if (this.filtersContainer && this.filterToggleBtn) {
+              this.filtersContainer.classList.add("hidden");
+              this.filterToggleBtn.classList.add("filters-hidden");
+            }
+          } else {
+            // Desktop Layout - Restore original structure
+            if (this.tabletContainer.parentElement) {
+              this.tabletContainer.remove();
+            }
+            this.titleContainerParent.insertBefore(
+              this.titleContainer,
+              this.titleContainerParent.firstChild
+            );
+            this.sortContainerParent.appendChild(this.sortContainer);
+            this.resultsCountParent.appendChild(this.resultsCountText);
+            this.filteredTagsParent.appendChild(this.filteredTags);
+
+            // Show filters in desktop view
+            if (this.filtersContainer && this.filterToggleBtn) {
+              this.filtersContainer.classList.remove("hidden");
+              this.filterToggleBtn.classList.remove("filters-hidden");
+            }
+          }
+        }
+      }
+
+      // Application Controller
+      // --------------------
+
+      // Main Application Controller - Coordinates all components
       class CommunicationApp {
         constructor() {
           // Get current date for relative date calculations
@@ -2631,110 +2759,7 @@
         }
       }
 
-      // Add this code at the end of your existing JavaScript, just before the DOMContentLoaded event
-      class LayoutManager {
-        constructor() {
-          this.mainContainer = document.querySelector(".gh-container-xl");
-          this.titleContainer = document.getElementById("communications-page-title-container");
-          this.sortContainer = document.getElementById("communications-sort-container");
-          this.resultsCountText = document.getElementById("communications-results-count-text");
-          this.filteredTags = document.getElementById("filtered-tags");
-          this.resultsContainer = document.querySelector(".results-count");
-          this.filtersContainer = document.querySelector(".communications-sidebar");
-          this.filterToggleBtn = document.querySelector(".filter-toggle-btn");
-
-          this.mediaQuery = window.matchMedia("(max-width: 1023px)");
-          this.handleTabletLayout = this.handleTabletLayout.bind(this);
-
-          // Create containers
-          this.tabletContainer = document.createElement("div");
-          this.tabletContainer.id = "tablet-layout-container";
-
-          this.secondRowContainer = document.createElement("div");
-          this.secondRowContainer.className = "second-row-container";
-
-          // Initialize
-          this.init();
-        }
-
-        init() {
-          // Store original parent elements for restoration
-          this.titleContainerParent = this.titleContainer.parentElement;
-          this.sortContainerParent = this.sortContainer.parentElement;
-          this.resultsCountParent = this.resultsCountText.parentElement;
-          this.filteredTagsParent = this.filteredTags.parentElement;
-
-          // Add media query listener
-          this.mediaQuery.addListener(this.handleTabletLayout);
-
-          // Setup filter toggle
-          this.setupFilterToggle();
-
-          // Initial check
-          this.handleTabletLayout(this.mediaQuery);
-        }
-
-        setupFilterToggle() {
-          if (this.filterToggleBtn && this.filtersContainer) {
-            this.filterToggleBtn.addEventListener("click", () => {
-              const isHidden = this.filtersContainer.classList.toggle("hidden");
-              this.filterToggleBtn.classList.toggle("filters-hidden", isHidden);
-
-              // Update button text and icon
-              const buttonText = this.filterToggleBtn.querySelector("span");
-              const buttonIcon = this.filterToggleBtn.querySelector("i");
-              buttonText.textContent = isHidden ? "Show Filters" : "Hide Filters";
-              buttonIcon.classList.remove(isHidden ? "fa-minus" : "fa-plus");
-              buttonIcon.classList.add(isHidden ? "fa-plus" : "fa-minus");
-            });
-          }
-        }
-
-        handleTabletLayout(e) {
-          if (e.matches) {
-            // Tablet Layout
-            // Insert tablet container at the start of main container
-            this.mainContainer.insertBefore(this.tabletContainer, this.mainContainer.firstChild);
-
-            // Move elements into tablet container
-            this.tabletContainer.appendChild(this.titleContainer);
-
-            // Setup second row
-            this.secondRowContainer.appendChild(this.resultsCountText);
-            this.secondRowContainer.appendChild(this.sortContainer);
-            this.tabletContainer.appendChild(this.secondRowContainer);
-
-            // Add filtered tags
-            this.tabletContainer.appendChild(this.filteredTags);
-
-            // Initially hide filters in tablet view
-            if (this.filtersContainer && this.filterToggleBtn) {
-              this.filtersContainer.classList.add("hidden");
-              this.filterToggleBtn.classList.add("filters-hidden");
-            }
-          } else {
-            // Desktop Layout - Restore original structure
-            if (this.tabletContainer.parentElement) {
-              this.tabletContainer.remove();
-            }
-            this.titleContainerParent.insertBefore(
-              this.titleContainer,
-              this.titleContainerParent.firstChild
-            );
-            this.sortContainerParent.appendChild(this.sortContainer);
-            this.resultsCountParent.appendChild(this.resultsCountText);
-            this.filteredTagsParent.appendChild(this.filteredTags);
-
-            // Show filters in desktop view
-            if (this.filtersContainer && this.filterToggleBtn) {
-              this.filtersContainer.classList.remove("hidden");
-              this.filterToggleBtn.classList.remove("filters-hidden");
-            }
-          }
-        }
-      }
-
-      // Initialize the application when the DOM is ready
+      // Initialize Application
       document.addEventListener("DOMContentLoaded", () => {
         new CommunicationApp();
         new LayoutManager();
