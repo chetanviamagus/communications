@@ -455,7 +455,7 @@
         text-decoration: none;
         transition: var(--transition-normal);
         border: 1px solid var(--secondary-color);
-        padding: 10px 20px;
+        padding: 10px 20px 12px 20px;
         margin-top: 50px;
         margin-bottom: 40px;
         display: inline-block;
@@ -885,15 +885,6 @@
         transition: var(--transition-normal) !important;
       }
 
-      /* Custom dropdown arrow styling */
-      .filter-section select.filter-dropdown {
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 12px center;
-        background-size: 14px;
-        padding-right: 35px;
-      }
-
       .filter-dropdown:hover {
         border-color: var(--primary-color);
       }
@@ -947,131 +938,6 @@
       .selected-filters-container {
         display: none;
       }
-
-      /* Responsive Styles - Consolidated */
-      @media (max-width: 1248px) {
-        .gh-container-lg {
-          max-width: 735px;
-          width: 100%;
-        }
-      }
-
-      @media (max-width: 1023px) {
-        .container {
-          width: 90%;
-          padding: 15px;
-        }
-        .communications-main-content {
-          display: flex;
-          flex-wrap: wrap;
-          flex-direction: column;
-        }
-        .filter-list {
-          flex-wrap: wrap;
-          flex-direction: row;
-        }
-        /* Tablet container styles */
-        #tablet-layout-container {
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          margin-bottom: 20px;
-        }
-
-        /* Title container adjustments for tablet */
-        #communications-page-title-container {
-          width: 100%;
-          padding-bottom: 8px;
-          margin-bottom: 20px;
-          order: 1;
-        }
-
-        #communications-page-title-container h1 {
-          font-size: 36px;
-          line-height: 1.2;
-          margin: 0;
-          padding: 0;
-        }
-
-        /* Second row container for results and sort */
-        .second-row-container {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          width: 100%;
-          margin-bottom: 15px;
-          order: 2;
-        }
-
-        /* Results count adjustments for tablet */
-        #communications-results-count-text {
-          font-family: var(--font-bold);
-          font-size: 18px;
-          margin: 0;
-        }
-
-        /* Sort container adjustments for tablet */
-        #communications-sort-container {
-          border: none;
-          margin: 0;
-        }
-
-        #communications-sort-container select {
-          width: 210px;
-          font-size: 18px;
-          padding: 5px 10px;
-          height: 40px;
-        }
-
-        .view-toggle {
-          display: none;
-        }
-
-        /* Filtered tags adjustments for tablet */
-        #filtered-tags {
-          width: 100%;
-          margin: 0 0 20px;
-          order: 3;
-        }
-
-        /* Product grid adjustments */
-        .products-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 18px;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .communications-main-content {
-          flex-direction: column;
-        }
-
-        .communications-sidebar {
-          flex: 0 0 100%;
-          margin-right: 0;
-          margin-bottom: 20px;
-        }
-
-        .content {
-          width: 100%;
-        }
-      }
-
-      @media (max-width: 735px) {
-        .gh-container-xs {
-          max-width: 332px;
-          width: 100%;
-          padding: 0 15px;
-        }
-      }
-
-      @media (max-width: 767px) {
-        .container {
-          width: 95%;
-          padding: 10px;
-        }
-      }
-
       /* Filter Toggle Button Styles */
       .filter-toggle-btn {
         display: none;
@@ -1107,6 +973,183 @@
         max-height: 0;
         opacity: 0;
         overflow: hidden;
+      }
+      /* Responsive Styles - Consolidated */
+      @media (max-width: 1248px) {
+        .gh-container-lg {
+          max-width: 735px;
+          width: 100%;
+        }
+      }
+
+      @media (min-width: 768px) and (max-width: 1023px) {
+        .filter-toggle-btn {
+          align-items: flex-end !important;
+          margin-bottom: 9px;
+        }
+        .filter-toggle-btn i {
+          margin-bottom: 1px;
+        }
+        .communications-sidebar {
+          margin-right: 0;
+          padding-top: 8px;
+        }
+        .communications-search-container {
+          margin-bottom: 28px;
+        }
+        .container {
+          width: 90%;
+          padding: 15px;
+        }
+        .communications-main-content {
+          display: flex;
+          flex-wrap: wrap;
+          flex-direction: column;
+          margin-top: 0;
+        }
+        .filter-list {
+          flex-wrap: wrap;
+          flex-direction: row;
+        }
+        /* Tablet container styles */
+        #tablet-layout-container {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          margin-bottom: 10px;
+        }
+
+        /* Title container adjustments for tablet */
+        #communications-page-title-container {
+          width: 100%;
+          padding-bottom: 12px;
+          margin-bottom: 18px;
+          order: 1;
+        }
+
+        #communications-page-title-container h1 {
+          font-size: 30px;
+          line-height: 1.2;
+          margin: 0;
+          padding: 0;
+        }
+
+        /* Second row container for results and sort */
+        .second-row-container {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          width: 100%;
+          margin-bottom: 15px;
+          order: 2;
+        }
+
+        /* Results count adjustments for tablet */
+        #communications-results-count-text {
+          font-family: var(--font-bold);
+          font-size: 18px;
+          margin: 0;
+        }
+
+        /* Sort container adjustments for tablet */
+        #communications-sort-container {
+          border: none;
+          margin: 0;
+        }
+
+        #communications-sort-container select {
+          width: 244px;
+          font-size: 18px;
+          padding: 5px 16px;
+          height: 48px;
+        }
+        .sort-container select {
+          background-position-x: 196px;
+        }
+        .view-toggle {
+          display: none;
+        }
+
+        /* Filtered tags adjustments for tablet */
+        #filtered-tags {
+          width: 100%;
+          margin: 0 0 20px;
+          order: 3;
+        }
+
+        /* Product grid adjustments */
+        .products-grid {
+          grid-template-columns: repeat(3, 1fr);
+          column-gap: 33px;
+          row-gap: 31px;
+        }
+        .filter-section h2 {
+          font-size: 19px;
+          margin: 0 0 20px 0;
+        }
+      }
+
+      @media (max-width: 767px) {
+        .container {
+          width: 95%;
+          padding: 10px;
+        }
+        .communications-main-content {
+          margin-top: 0;
+          flex-direction: column;
+        }
+        .filter-section h2 {
+          font-size: 19px;
+        }
+
+        .communications-sidebar {
+          padding-top: 0;
+          flex: 0 0 100%;
+          margin-right: 0;
+          margin-bottom: 20px;
+        }
+
+        .content {
+          width: 100%;
+        }
+        .gh-container-xs {
+          max-width: 332px;
+          width: 100%;
+          padding: 0 15px;
+        }
+        .page-title-border-bottom {
+          padding-bottom: 12px;
+          margin-bottom: 9px;
+        }
+        .page-title-border-bottom h1 {
+          font-size: 30px;
+        }
+        .view-toggle {
+          display: none;
+        }
+
+        .sort-container select {
+          width: 100%;
+          padding: 13px 22px;
+          height: auto;
+          background-position-x: 284px;
+        }
+        .products-grid {
+          grid-template-columns: repeat(1, 1fr);
+        }
+        .filter-toggle-btn {
+          margin-bottom: 1px;
+          padding: 10px 16px;
+        }
+        .communications-search-container {
+          margin-top: 15px;
+        }
+        .filter-dropdown {
+          padding: 12px 12px 11px 12px;
+          background: #f2f2f2 url(/Content/GreenheckStyles/imgs/grey-triangle.png) no-repeat right;
+          background-size: 20px;
+          background-position-x: 94%;
+        }
       }
 
       /* Tablet Layout Styles */
