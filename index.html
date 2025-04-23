@@ -4,9 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Communication</title>
-    <link rel="stylesheet" href="styles.css" />
-    <style></style>
-
     <link
       rel="icon"
       sizes="16x16"
@@ -60,43 +57,1021 @@
       sizes="192x192"
       href="https://cms-test.greenheck.com/Content/GreenheckStyles/imgs/favicon-192.png"
     />
+    <style>
+      /* CSS Variables for consistent styling */
+      :root {
+        /* Colors */
+        --text-white: #fff;
+        --primary-color: #d97a24;
+        --primary-hover: #fff;
+        --secondary-color: #075697;
+        --text-color: #57585a;
+        --text-dark: #333;
+        --text-light: #666;
+        --border-color: #ccc;
+        --border-light: #eee;
+        --bg-light: #f5f5f5;
+        --bg-lighter: #f6f6f6;
+        --bg-white: #fff;
+
+        /* Box Shadows */
+        --input-shadow: inset 1px 1px 10px 0 rgba(0, 0, 0, 0.62), 0 0 0 0 rgba(0, 0, 0, 0.62);
+        --dropdown-shadow: inset -4px -2px 10px 0 #ccc, 0 0 0 0 rgba(0, 0, 0, 0.62);
+        --card-hover-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        --modal-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        --tablet-card-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+        /* Transitions */
+        --transition-normal: all 0.3s ease;
+        --transition-fast: all 0.2s ease;
+
+        /* Border Radius */
+        --border-radius-normal: 4px;
+        --border-radius-large: 7px;
+
+        /* Font Families */
+        --font-primary: "Helvetica-Condensed", sans-serif;
+        --font-bold: "Helvetica-Condensed-Bold", sans-serif;
+        --font-icons: "Font Awesome 5 Free";
+      }
+
+      @font-face {
+        font-display: block;
+        font-family: "Font Awesome 5 Free";
+        font-style: normal;
+        font-weight: 900;
+        src: url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-solid-900.eot);
+        src:
+          url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-solid-900.eot?#iefix)
+            format("embedded-opentype"),
+          url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-solid-900.woff2)
+            format("woff2"),
+          url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-solid-900.woff)
+            format("woff"),
+          url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-solid-900.ttf)
+            format("truetype"),
+          url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-solid-900.svg#fontawesome)
+            format("svg");
+      }
+
+      /* Font-face declarations for Helvetica Condensed family */
+      @font-face {
+        font-family: "Helvetica-Condensed";
+        font-style: normal;
+        font-weight: 400;
+        src: url("/Content/GreenheckStyles/fonts/Helvetica-Condensed.otf");
+      }
+
+      @font-face {
+        font-family: "Helvetica-Condensed-Bold";
+        font-style: normal;
+        font-weight: 700;
+        src: url("/Content/GreenheckStyles/fonts/Helvetica-Condensed-Bold.otf");
+      }
+
+      /* Font Awesome Icons */
+      .fa,
+      .far,
+      .fas {
+        font-family: var(--font-icons);
+      }
+
+      .fa,
+      .fab,
+      .fad,
+      .fal,
+      .far,
+      .fas {
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        display: inline-block;
+        font-style: normal;
+        font-variant: normal;
+        line-height: 1;
+        text-rendering: auto;
+      }
+
+      .fa-chevron-down:before {
+        content: "\f078";
+      }
+
+      .fa-chevron-up:before {
+        content: "\f077";
+      }
+
+      .fa-search:before {
+        content: "\f002";
+        color: #5f6368;
+      }
+
+      .fa-th-large:before {
+        content: "\f009";
+        color: #d0d0d0;
+      }
+
+      .fa-list-ul:before {
+        content: "\f0ca";
+        color: #d0d0d0;
+      }
+      .fa-times:before {
+        content: "\f00d";
+      }
+      .active .fa-list-ul:before,
+      .active .fa-th-large:before {
+        color: var(--secondary-color);
+      }
+      ::-webkit-input-placeholder {
+        font-size: 13px !important;
+        font-family: "Helvetica";
+        font-weight: 500;
+      }
+      /* Common Styles */
+      .breadcrumb-container .container {
+        width: 100% !important;
+      }
+      .flex-center {
+        display: flex;
+        align-items: center;
+      }
+
+      .flex-between {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      /* Container styles - consolidated */
+      .container,
+      .gh-container-xl {
+        margin: 0 auto;
+        max-width: 1246px;
+        padding: 0;
+        width: 85%;
+      }
+
+      /* Search Styles */
+      .communications-search-container {
+        margin-bottom: 33px;
+        position: relative;
+      }
+
+      .search-input-wrapper {
+        border: 0;
+        border-radius: 0;
+        display: flex;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .communications-search-input {
+        background-color: var(--bg-white);
+        border: 1px solid var(--border-color) !important;
+        box-shadow: var(--input-shadow);
+        -moz-box-shadow: var(--input-shadow);
+        -webkit-box-shadow: var(--input-shadow);
+        flex: 1;
+        font-size: 16px;
+        outline: none;
+        padding: 13px 16px;
+      }
+
+      #search-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        height: 100%;
+        padding: 0 15px;
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+
+      #search-button:hover {
+        background: none;
+      }
+
+      #search-button:hover .fa-search:before {
+        color: var(--primary-color);
+      }
+
+      .search-suggestions {
+        background: var(--bg-white);
+        border: 1px solid var(--border-color);
+        border-radius: 0 0 var(--border-radius-normal) var(--border-radius-normal);
+        border-top: none;
+        display: none;
+        left: 0;
+        max-height: 200px;
+        overflow-y: auto;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        z-index: 10;
+      }
+
+      .suggestion-item {
+        cursor: pointer;
+        font-family: var(--font-primary);
+        padding: 8px 10px;
+        transition: var(--transition-normal) !important;
+      }
+
+      .suggestion-item:hover {
+        background: var(--bg-light);
+      }
+
+      .suggestion-item.selected {
+        background-color: #e0e0e0;
+      }
+
+      /* Layout Styles */
+      .communications-main-content {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 31px;
+      }
+
+      .communications-sidebar {
+        flex: 0 0 287px;
+        margin-right: 31px;
+        padding-top: 11px;
+      }
+
+      .content {
+        flex: 1;
+      }
+
+      /* Main content styles */
+      main {
+        padding: 0;
+      }
+
+      /* Page Title Styles */
+      .page-title-border-bottom {
+        border-bottom: 4px solid #d3d3d3;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding-bottom: 10px;
+      }
+
+      .page-title-border-bottom h1 {
+        color: var(--text-dark);
+        font-family: var(--font-bold);
+        font-size: 40px;
+        margin: 0;
+        padding: 0;
+        line-height: 1.2;
+      }
+
+      /* Cards Styles */
+      .communications-header {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .results-count {
+        color: var(--text-color);
+        font-family: var(--font-bold);
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .results-count-text {
+        color: var(--text-color);
+        font-family: var(--font-bold);
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      /* Load More Button */
+      .load-more-container {
+        align-items: center;
+        border-bottom: 1px solid #e5e5e5;
+        display: flex;
+        justify-content: center;
+        margin-top: 49px;
+        padding-bottom: 30px;
+        text-align: center;
+      }
+
+      /* No Results */
+      .no-results {
+        padding: 20px;
+        text-align: center;
+        color: var(--text-light);
+        grid-column: 1 / -1;
+      }
+
+      /* Sort Container Styles */
+      .sort-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+      }
+
+      .sort-container select {
+        background-color: #f2f2f2;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-large);
+        box-shadow: var(--dropdown-shadow);
+        -webkit-box-shadow: var(--dropdown-shadow);
+        color: var(--text-color);
+        cursor: pointer;
+        font-family: var(--font-primary);
+        font-size: 18px;
+        padding: 5px 10px;
+        height: 40px;
+        width: 210px;
+        transition: var(--transition-normal);
+        background: url(/Content/GreenheckStyles/imgs/grey-triangle.png) no-repeat right;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        background-size: 20px;
+        background-position-x: 94%;
+      }
+
+      .sort-container select:hover {
+        border-color: #999;
+      }
+
+      .sort-container select:focus {
+        border-color: var(--primary-color);
+        outline: none;
+      }
+
+      /* View Toggle Styles */
+      .view-toggle {
+        display: flex;
+        gap: 8px;
+        margin-left: 20px;
+      }
+
+      .view-btn {
+        background: none;
+        border: 0px solid #ddd;
+        border-radius: var(--border-radius-normal);
+        cursor: pointer;
+        font-size: 17px;
+        padding: 8px 12px;
+        transition: var(--transition-normal) !important;
+      }
+
+      .view-btn:hover {
+        border-color: #999;
+      }
+
+      .view-btn.active {
+        color: var(--secondary-color);
+      }
+
+      /* Filter communications-sidebar styles */
+      .communications-filters-container {
+        display: flex;
+        flex-direction: column;
+        gap: 34px;
+      }
+      .filter-section {
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      .filter-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      .filter-section h2 {
+        border-bottom: 1px solid var(--border-light);
+        color: var(--text-dark);
+        font-family: var(--font-bold);
+        font-size: 21px;
+        font-weight: bold;
+        margin: 0 0 21px 0;
+        padding-bottom: 10px;
+      }
+
+      .filter-list {
+        color: var(--text-color);
+        display: flex;
+        flex-direction: column;
+        font-family: var(--font-primary);
+        font-size: 15px;
+        gap: 10px;
+        list-style: none;
+        margin: 0;
+        padding: 0 0 0 4px;
+      }
+
+      .filter-list li {
+        align-items: center;
+        display: flex;
+        gap: 0;
+      }
+
+      .filter-list label {
+        align-items: center;
+        color: #555;
+        display: flex;
+        font-family: var(--font-primary);
+        font-size: 0.9375rem;
+      }
+
+      .filter-list input[type="checkbox"] {
+        border: 1px solid #979797;
+        border-radius: var(--border-radius-normal);
+        height: 20px;
+        margin: 0;
+        opacity: 1;
+        width: 20px;
+        transition: var(--transition-normal) !important;
+      }
+
+      .filter-list input[type="checkbox"]:hover {
+        border-color: var(--primary-color);
+      }
+
+      .filter-list label.hidden-option {
+        display: none;
+      }
+
+      .filter-list label.hidden-option.show {
+        display: flex;
+      }
+
+      .view-more {
+        align-items: center;
+        background: none;
+        border: none;
+        color: var(--text-dark);
+        cursor: pointer;
+        display: flex;
+        font-family: var(--font-primary);
+        font-size: 14px;
+        gap: 5px;
+        margin-left: 20px;
+        margin-top: 15px;
+        text-decoration: none;
+        transition: var(--transition-normal) !important;
+      }
+
+      .view-more:hover {
+        color: var(--primary-color);
+      }
+
+      .view-more i {
+        font-size: 0.8rem;
+        padding-top: 4px;
+        transition: transform 0.3s ease;
+      }
+
+      .view-more.active i {
+        transform: rotate(180deg);
+      }
+
+      /* Products Grid Styles */
+      .products-grid {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: repeat(3, 1fr);
+        margin-bottom: 32px;
+        transition: grid-template-columns 0.3s ease;
+      }
+
+      /* List View Styles */
+      .products-grid.list-view {
+        gap: 16px;
+        grid-template-columns: 1fr;
+      }
+
+      .products-grid.list-view .product-card {
+        display: flex;
+        flex-direction: row;
+        transition: flex-direction 0.3s ease;
+      }
+
+      .products-grid.list-view .product-image {
+        flex-shrink: 0;
+        width: 200px;
+      }
+
+      .products-grid.list-view .product-info {
+        flex: 1;
+      }
+
+      /* Product Card Styles */
+      .product-card {
+        background-color: var(--bg-white);
+        border: 1px solid #d6d6d6;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+        transition: var(--transition-normal) !important;
+      }
+
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--card-hover-shadow);
+      }
+
+      .product-image {
+        align-items: center;
+        background-color: var(--bg-lighter);
+        display: flex;
+        height: 134px;
+        justify-content: center;
+        padding: 15px;
+      }
+
+      .product-image img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+      }
+
+      .product-info {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: 16px;
+        padding: 16px 19px 15px;
+      }
+
+      .product-title,
+      .product-description,
+      .product-meta-info,
+      .product-category-info {
+        color: var(--text-color);
+        font-family: var(--font-primary);
+        letter-spacing: 0;
+        line-height: 21px;
+        margin: 0;
+        text-align: left;
+      }
+
+      .product-title {
+        font-family: var(--font-bold);
+        font-size: 1.125rem;
+      }
+
+      .product-description {
+        flex-grow: 1;
+        font-size: 0.9375rem;
+      }
+
+      .product-meta-info,
+      .product-category-info {
+        font-size: 13px;
+      }
+
+      .product-meta {
+        align-items: center;
+        display: flex;
+        gap: 8px;
+      }
+
+      .communication-type {
+        color: var(--text-dark);
+        font-family: var(--font-primary);
+        font-size: 13px;
+        font-weight: 400;
+      }
+
+      .communication-icon {
+        max-height: 14px;
+        max-width: 14px;
+        object-fit: contain;
+      }
+
+      .product-footer {
+        align-items: flex-end;
+        display: flex;
+        justify-content: space-between;
+        margin-top: auto;
+      }
+
+      .prd-btn {
+        background-color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        border-radius: var(--border-radius-large);
+        color: var(--text-white) !important;
+        cursor: pointer;
+        display: block;
+        font-family: var(--font-bold);
+        font-size: 16px !important;
+        font-weight: bold;
+        line-height: 18px !important;
+        padding: 6px 21px 8px;
+        text-align: center;
+        text-decoration: none !important;
+        width: auto;
+        transition: var(--transition-normal) !important;
+      }
+
+      .prd-btn:hover {
+        background-color: var(--primary-hover) !important;
+        border: 1px solid var(--primary-color) !important;
+        color: var(--primary-color) !important;
+      }
+
+      .card-footer-container {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      /* Modal styles */
+      .communications-modal {
+        background-color: rgba(0, 0, 0, 0.4);
+        display: none;
+        height: 100%;
+        left: 0;
+        overflow: auto;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 9999;
+        transition: var(--transition-normal) !important;
+      }
+
+      .communications-modal-content {
+        background-color: var(--bg-white);
+        border-radius: var(--border-radius-normal);
+        box-shadow: var(--modal-shadow);
+        margin: 60px auto;
+        max-width: 720px;
+        padding: 40px;
+        width: 90%;
+        position: relative;
+        transition:
+          transform 0.3s ease,
+          opacity 0.3s ease;
+      }
+
+      .communications-modal-footer {
+        margin-top: 30px;
+        text-align: center;
+      }
+
+      .communications-modal-learn-more {
+        background: var(--secondary-color);
+        border: 1px solid var(--secondary-color);
+        color: var(--text-white);
+        border-radius: 24px;
+        cursor: pointer;
+        font-size: 20px;
+        padding: 6px 30px 8px 30px;
+        transition: var(--transition-normal) !important;
+        font-family: var(--font-primary);
+        text-decoration: none !important;
+      }
+
+      .communications-modal-learn-more:hover {
+        background: var(--bg-white);
+        border: 1px solid var(--secondary-color);
+        color: var(--secondary-color) !important;
+      }
+
+      .communications-modal-close {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        color: #aaa;
+        cursor: pointer;
+        font-size: 28px;
+        font-weight: bold;
+        background: none;
+        border: none;
+        padding: 0;
+      }
+
+      .communications-modal-close:hover,
+      .communications-modal-close:focus {
+        color: var(--text-dark);
+      }
+
+      .communications-modal-image {
+        width: 100%;
+        height: 100%;
+        max-height: 250px;
+        max-width: 450px;
+        object-fit: contain;
+        margin: 20px auto;
+        display: block;
+      }
+
+      .communications-modal-title {
+        color: rgba(87, 88, 90, 1);
+        font-family: "HelveticaNeue-CondensedBold", "Helvetica-Condensed-Bold", sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        font-style: normal;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        line-height: 1.2;
+        text-align: center;
+      }
+
+      .communications-modal-summary {
+        color: rgba(87, 88, 90, 1);
+        font-family: "HelveticaNeueLTStd-57Condensed", "Helvetica-Condensed", sans-serif;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 21px;
+      }
+
+      #version-link {
+        color: var(--primary-color);
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      #version-link:hover {
+        text-decoration: underline;
+      }
+
+      #changelog-content {
+        margin-top: 20px;
+      }
+
+      .version-item {
+        border-bottom: 1px solid #eee;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+      }
+
+      .version-item:last-child {
+        border-bottom: none;
+      }
+
+      .version-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .version-number {
+        color: var(--text-dark);
+        font-family: var(--font-bold);
+        font-size: 1.2rem;
+      }
+
+      .version-date {
+        color: var(--text-light);
+        font-size: 0.9rem;
+      }
+
+      .version-changes {
+        color: #555;
+        list-style-type: disc;
+        padding-left: 20px;
+      }
+
+      .version-changes li {
+        margin-bottom: 5px;
+      }
+
+      /* Filter Dropdown Styles */
+      .filter-dropdown {
+        width: 100%;
+        padding: 6px 12px 10px 12px;
+        font-family: var(--font-primary);
+        font-size: 20px;
+        color: var(--text-color);
+        background-color: #f2f2f2;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-large);
+        appearance: none;
+        cursor: pointer;
+        position: relative;
+        box-shadow: var(--dropdown-shadow);
+        -webkit-box-shadow: var(--dropdown-shadow);
+        transition: var(--transition-normal) !important;
+      }
+
+      /* Custom dropdown arrow styling */
+      .filter-section select.filter-dropdown {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 14px;
+        padding-right: 35px;
+      }
+
+      .filter-dropdown:hover {
+        border-color: var(--primary-color);
+      }
+
+      .filter-dropdown:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      /* Filtered Tags Styles */
+      .filtered-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+
+      .selected-filter {
+        display: inline-flex;
+        align-items: center;
+        background: var(--bg-white);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-normal);
+        padding: 4px 8px;
+        font-family: var(--font-primary);
+        font-size: 14px;
+        color: var(--text-color);
+      }
+
+      .selected-filter .remove-filter {
+        background: none;
+        border: none;
+        color: #666;
+        cursor: pointer;
+        margin-left: 8px;
+        padding: 0;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1 !important;
+        margin-top: 3px;
+        transition: var(--transition-normal) !important;
+      }
+
+      .selected-filter .remove-filter:hover {
+        color: var(--primary-color);
+      }
+
+      /* Remove the old selected filters container styles */
+      .selected-filters-container {
+        display: none;
+      }
+
+      /* Responsive Styles - Consolidated */
+      @media (max-width: 1248px) {
+        .gh-container-lg {
+          max-width: 735px;
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 1023px) {
+        .container {
+          width: 90%;
+          padding: 15px;
+        }
+
+        /* Tablet container styles */
+        #tablet-layout-container {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          margin-bottom: 20px;
+        }
+
+        /* Title container adjustments for tablet */
+        #communications-page-title-container {
+          width: 100%;
+          padding-bottom: 8px;
+          margin-bottom: 20px;
+          order: 1;
+        }
+
+        #communications-page-title-container h1 {
+          font-size: 36px;
+          line-height: 1.2;
+          margin: 0;
+          padding: 0;
+        }
+
+        /* Second row container for results and sort */
+        .second-row-container {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          margin-bottom: 15px;
+          order: 2;
+        }
+
+        /* Results count adjustments for tablet */
+        #communications-results-count-text {
+          font-family: var(--font-bold);
+          font-size: 18px;
+          margin: 0;
+        }
+
+        /* Sort container adjustments for tablet */
+        #communications-sort-container {
+          border: none;
+          margin: 0;
+        }
+
+        #communications-sort-container select {
+          width: 210px;
+          font-size: 18px;
+          padding: 5px 10px;
+          height: 40px;
+        }
+
+        .view-toggle {
+          display: none;
+        }
+
+        /* Filtered tags adjustments for tablet */
+        #filtered-tags {
+          width: 100%;
+          margin: 0 0 20px;
+          order: 3;
+        }
+
+        /* Product grid adjustments */
+        .products-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 18px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .communications-main-content {
+          flex-direction: column;
+        }
+
+        .communications-sidebar {
+          flex: 0 0 100%;
+          margin-right: 0;
+          margin-bottom: 20px;
+        }
+
+        .content {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 735px) {
+        .gh-container-xs {
+          max-width: 332px;
+          width: 100%;
+          padding: 0 15px;
+        }
+      }
+
+      @media (max-width: 767px) {
+        .container {
+          width: 95%;
+          padding: 10px;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="gh-container-xl gh-container-lg gh-container-xs">
-      <div class="page-title-border-bottom">
-        <h1 class="page-title">COMMUNICATIONS</h1>
-        <div class="sort-container">
+      <div id="communications-page-title-container" class="page-title-border-bottom">
+        <h1 id="communicationspage-title">COMMUNICATIONS</h1>
+        <div id="communications-sort-container" class="sort-container">
           <div class="view-toggle">
             <button class="view-btn grid-view active"><i class="fas fa-th-large"></i></button>
             <button class="view-btn list-view"><i class="fas fa-list-ul"></i></button>
           </div>
-
-          <div class="sort-container">
-            <!-- <label for="sort-by">Sort by:</label> -->
-            <select id="sort-by">
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-            </select>
-          </div>
+          <select id="sort-by">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
         </div>
       </div>
+
       <div class="results-count">
-        <div class="results-count-text">
+        <div id="communications-results-count-text" class="results-count-text">
           Results: <span id="communication-count">0</span> Communications
         </div>
         <div class="filtered-tags" id="filtered-tags"></div>
       </div>
 
-      <div class="main-content">
-        <aside class="sidebar">
-          <div id="search-container" class="search-container">
+      <div class="communications-main-content">
+        <aside class="communications-sidebar">
+          <!-- Search Section -->
+          <div id="search-container" class="communications-search-container">
             <section class="filter-section" id="topics-section">
               <h2>Filter by Keyword</h2>
               <div class="search-input-wrapper">
                 <input
+                  class="communications-search-input"
                   type="text"
                   id="search-input"
-                  placeholder="Search titles..."
+                  placeholder="Enter keyword"
                   aria-label="Search titles"
                 />
                 <button id="search-button" aria-label="Search">
@@ -106,12 +1081,68 @@
               <div class="search-suggestions" id="search-suggestions"></div>
             </section>
           </div>
-          <div id="filters-container"></div>
+
+          <!-- Filter Templates -->
+          <div id="filters-container" class="communications-filters-container">
+            <!-- Templates for filters - will be populated by JS -->
+            <template id="dropdown-filter-template">
+              <section class="filter-section">
+                <h2></h2>
+                <select class="filter-dropdown"></select>
+              </section>
+            </template>
+
+            <template id="checkbox-filter-template">
+              <section class="filter-section">
+                <h2></h2>
+                <ul class="filter-list" role="group"></ul>
+                <button type="button" class="view-more" style="display: none">
+                  <i class="fas fa-chevron-down"></i> View More
+                </button>
+              </section>
+            </template>
+
+            <template id="checkbox-option-template">
+              <li>
+                <input type="checkbox" />
+                <label></label>
+              </li>
+            </template>
+          </div>
         </aside>
 
         <main class="content">
+          <!-- Product Card Template -->
+          <template id="product-card-template">
+            <article class="product-card">
+              <div class="product-image">
+                <img loading="lazy" />
+              </div>
+              <div class="product-info">
+                <h3 class="product-title"></h3>
+                <div class="product-meta-body">
+                  <div class="product-meta-info">
+                    <time></time>,
+                    <span class="issue-number"></span>
+                  </div>
+                  <div class="product-category-info">
+                    <span class="product-categories"></span> |
+                    <span class="product-topics"></span>
+                  </div>
+                </div>
+                <div class="product-footer">
+                  <div class="product-meta">
+                    <img class="communication-icon" />
+                    <span class="communication-type"></span>
+                  </div>
+                  <a class="prd-btn">VIEW</a>
+                </div>
+              </div>
+            </article>
+          </template>
+
           <div class="products-grid" id="communications-container">
-            <!-- Communication cards will be inserted here by JS -->
+            <!-- Product cards will be inserted here by JS -->
           </div>
           <div class="load-more-container">
             <button class="load-more prd-btn">LOAD MORE</button>
@@ -120,7 +1151,1416 @@
       </div>
     </div>
 
-    <!-- The JavaScript code will be included in a separate file -->
-    <script src="app.js"></script>
+    <div id="communicationModal" class="communications-modal">
+      <div class="communications-modal-content">
+        <button class="communications-modal-close" aria-label="Close modal">&times;</button>
+        <h2 class="communications-modal-title"></h2>
+        <img class="communications-modal-image" alt="" />
+        <div class="communications-modal-summary"></div>
+        <div class="communications-modal-footer">
+          <a href="#" class="communications-modal-learn-more">LEARN MORE</a>
+        </div>
+      </div>
+    </div>
+    <script>
+      var postData = [
+        {
+          title: "The Fast Pass and Kitchen Pass programs 4",
+          communicationType: "Bulletin",
+          summary:
+            "The Fast Pass and Kitchen Pass programs were originally designed to help you select and configure the most competitive products.",
+          issueNumber: "Issue# ",
+          AuthorName: "",
+          date: "January 15, 2025",
+          url: "https://cms-test.greenheck.com/resources/communications/the-fast-pass-and-kitchen-pass-programs-4",
+          topic: ["Fast Pass and Kitchen Pass"],
+          productCategory: ["Fans"],
+          Category: [{ Id: "124b2e5e-5425-401e-a779-1ed158167901", Title: "Communications" }],
+          Tags: [],
+          imageUrl:
+            "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
+        },
+        {
+          title: "The Fast Pass and Kitchen Pass programs 3",
+          communicationType: "Bulletin",
+          summary:
+            "The Fast Pass and Kitchen Pass programs were originally designed to help you select and configure the most competitive products.",
+          issueNumber: "Issue# ",
+          AuthorName: "",
+          date: "January 15, 2025",
+          url: "https://cms-test.greenheck.com/resources/communications/the-fast-pass-and-kitchen-pass-programs-3",
+          topic: ["Fast Pass and Kitchen Pass"],
+          productCategory: ["Fans"],
+          Category: [{ Id: "124b2e5e-5425-401e-a779-1ed158167901", Title: "Communications" }],
+          Tags: [],
+          imageUrl:
+            "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
+        },
+        {
+          title: "The Fast Pass and Kitchen Pass programs 2",
+          communicationType: "Bulletin",
+          summary:
+            "The Fast Pass and Kitchen Pass programs were originally designed to help you select and configure the most competitive products.",
+          issueNumber: "Issue# ",
+          AuthorName: "",
+          date: "January 15, 2025",
+          url: "https://cms-test.greenheck.com/resources/communications/the-fast-pass-and-kitchen-pass-programs-2",
+          topic: ["Fast Pass and Kitchen Pass"],
+          productCategory: ["Fans"],
+          Category: [{ Id: "124b2e5e-5425-401e-a779-1ed158167901", Title: "Communications" }],
+          Tags: [],
+          imageUrl:
+            "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
+        },
+        {
+          title: "The Fast Pass and Kitchen Pass programs 1",
+          communicationType: "Bulletin",
+          summary:
+            "The Fast Pass and Kitchen Pass programs were originally designed to help you select and configure the most competitive products.",
+          issueNumber: "Issue# ",
+          AuthorName: "",
+          date: "January 15, 2025",
+          url: "https://cms-test.greenheck.com/resources/communications/the-fast-pass-and-kitchen-pass-programs",
+          topic: ["Fast Pass and Kitchen Pass"],
+          productCategory: ["Fans"],
+          Category: [{ Id: "124b2e5e-5425-401e-a779-1ed158167901", Title: "Communications" }],
+          Tags: [],
+          imageUrl:
+            "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/featured-categories/gym_vav_system.jpg?sfvrsn=ff407117_4"
+        },
+        {
+          title: "Consulting-Specifying Engineer Product of the Year: AFL-601 Nomination-4",
+          communicationType: "Briefings",
+          summary:
+            "The AFL-601 Wind-Driven Rain FEMA Louver is a nominee for the Consulting-Specifying Engineer (CSE) Product of the Year awards in the HVAC category—and we need your vote to win!",
+          issueNumber: "Issue# 1",
+          AuthorName: "",
+          date: "February 5, 2025",
+          url: "https://cms-test.greenheck.com/resources/communications/consulting-specifying-engineer-product-of-the-year--afl-601-nomination-4",
+          topic: ["Newsletter"],
+          productCategory: ["AFL-601"],
+          Category: [{ Id: "124b2e5e-5425-401e-a779-1ed158167901", Title: "Communications" }],
+          Tags: [],
+          imageUrl:
+            "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
+        },
+        {
+          title: "Consulting-Specifying Engineer Product of the Year: AFL-601 Nomination-3",
+          communicationType: "Briefings",
+          summary:
+            "The AFL-601 Wind-Driven Rain FEMA Louver is a nominee for the Consulting-Specifying Engineer (CSE) Product of the Year awards in the HVAC category—and we need your vote to win!",
+          issueNumber: "Issue# 1",
+          AuthorName: "",
+          date: "February 5, 2025",
+          url: "https://cms-test.greenheck.com/resources/communications/consulting-specifying-engineer-product-of-the-year--afl-601-nomination-3",
+          topic: ["Newsletter"],
+          productCategory: ["AFL-601"],
+          Category: [{ Id: "124b2e5e-5425-401e-a779-1ed158167901", Title: "Communications" }],
+          Tags: [],
+          imageUrl:
+            "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
+        },
+        {
+          title: "Consulting-Specifying Engineer Product of the Year: AFL-601 Nomination-2",
+          communicationType: "Briefings",
+          summary:
+            "The AFL-601 Wind-Driven Rain FEMA Louver is a nominee for the Consulting-Specifying Engineer (CSE) Product of the Year awards in the HVAC category—and we need your vote to win!",
+          issueNumber: "Issue# 1",
+          AuthorName: "",
+          date: "February 5, 2025",
+          url: "https://cms-test.greenheck.com/resources/communications/consulting-specifying-engineer-product-of-the-year--afl-601-nomination-2",
+          topic: ["Newsletter"],
+          productCategory: ["AFL-601"],
+          Category: [{ Id: "124b2e5e-5425-401e-a779-1ed158167901", Title: "Communications" }],
+          Tags: [],
+          imageUrl:
+            "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
+        },
+        {
+          title: "Consulting-Specifying Engineer Product of the Year: AFL-601 Nomination",
+          communicationType: "Briefings",
+          summary:
+            "The AFL-601 Wind-Driven Rain FEMA Louver is a nominee for the Consulting-Specifying Engineer (CSE) Product of the Year awards in the HVAC category—and we need your vote to win!",
+          issueNumber: "Issue# 1",
+          AuthorName: "",
+          date: "February 5, 2025",
+          url: "https://cms-test.greenheck.com/resources/communications/consulting-specifying-engineer-product-of-the-year--afl-601-nomination",
+          topic: ["Newsletter"],
+          productCategory: ["AFL-601"],
+          Category: [{ Id: "124b2e5e-5425-401e-a779-1ed158167901", Title: "Communications" }],
+          Tags: [],
+          imageUrl:
+            "https://ghsitefinitytesting.blob.core.windows.net/greenheck-cms-test/images/default-source/default-album/cse2020_poylogo_gold.jpg?sfvrsn=bab8c650_4"
+        }
+      ];
+
+      // Search index service - responsible for indexing and searching data
+      class SearchIndexService {
+        constructor(data, indexSummary = false) {
+          this.data = data;
+          this.titleIndex = new Map();
+          this.summaryIndex = new Map();
+          this.indexSummary = indexSummary;
+          this.indexData();
+        }
+
+        indexData() {
+          // Create an index of words to items for faster search
+          this.data.forEach(item => {
+            // Index title
+            const titleWords = item.title.toLowerCase().split(/\s+/);
+            titleWords.forEach(word => {
+              if (!this.titleIndex.has(word)) {
+                this.titleIndex.set(word, []);
+              }
+              if (!this.titleIndex.get(word).includes(item)) {
+                this.titleIndex.get(word).push(item);
+              }
+            });
+
+            // Index summary if enabled and it exists
+            if (this.indexSummary && item.summary) {
+              const summaryWords = item.summary.toLowerCase().split(/\s+/);
+              summaryWords.forEach(word => {
+                if (!this.summaryIndex.has(word)) {
+                  this.summaryIndex.set(word, []);
+                }
+                if (!this.summaryIndex.get(word).includes(item)) {
+                  this.summaryIndex.get(word).push(item);
+                }
+              });
+            }
+          });
+        }
+
+        search(query) {
+          if (!query || query.trim() === "") {
+            return [];
+          }
+
+          const searchTerm = query.toLowerCase().trim();
+          const results = new Set();
+
+          // Search in titles
+          this.titleIndex.forEach((items, word) => {
+            if (word.includes(searchTerm)) {
+              items.forEach(item => results.add(item));
+            }
+          });
+
+          // Search in summaries if enabled
+          if (this.indexSummary) {
+            this.summaryIndex.forEach((items, word) => {
+              if (word.includes(searchTerm)) {
+                items.forEach(item => results.add(item));
+              }
+            });
+          }
+
+          return Array.from(results);
+        }
+
+        getSuggestions(prefix, limit = 5) {
+          if (!prefix || prefix.trim() === "") {
+            return [];
+          }
+
+          const searchTerm = prefix.toLowerCase().trim();
+          const suggestions = new Set();
+
+          // Get title suggestions
+          this.titleIndex.forEach((_, word) => {
+            if (word.startsWith(searchTerm)) {
+              // Remove colon from the suggestion
+              const cleanWord = word.replace(/:/g, "");
+              suggestions.add(cleanWord);
+            }
+          });
+
+          // Get summary suggestions if enabled
+          if (this.indexSummary) {
+            this.summaryIndex.forEach((_, word) => {
+              if (word.startsWith(searchTerm)) {
+                // Remove colon from the suggestion
+                const cleanWord = word.replace(/:/g, "");
+                suggestions.add(cleanWord);
+              }
+            });
+          }
+
+          // Convert set to array, sort alphabetically and limit results
+          return Array.from(suggestions).sort().slice(0, limit);
+        }
+      }
+
+      // Data layer - responsible for managing and filtering data
+      class CommunicationDataService {
+        constructor(rawData) {
+          this.data = rawData;
+          this.filteredData = [...rawData];
+          this.activeFilters = {
+            topics: [],
+            "product-categories": [],
+            "communication-type": [],
+            timeframe: "All Time"
+          };
+          this.searchTerm = "";
+          this.searchIndex = new SearchIndexService(rawData);
+          this.timeframes = [
+            "All Time",
+            "Last Year",
+            "Last 9 Months",
+            "Last 6 Months",
+            "Last 3 Months",
+            "Last Month",
+            "Last Week"
+          ];
+          this.sortOrder = "newest"; // Default sort order
+        }
+
+        getUniqueValues(property) {
+          // Handle array properties
+          if (property === "topic" || property === "productCategory") {
+            const allValues = new Set();
+            this.data.forEach(item => {
+              if (Array.isArray(item[property])) {
+                item[property].forEach(value => allValues.add(value));
+              }
+            });
+            return Array.from(allValues);
+          }
+          return [...new Set(this.data.map(item => item[property]))];
+        }
+
+        updateFilter(filterType, value, isActive) {
+          if (isActive) {
+            if (!this.activeFilters[filterType].includes(value)) {
+              this.activeFilters[filterType].push(value);
+            }
+          } else {
+            const index = this.activeFilters[filterType].indexOf(value);
+            if (index !== -1) {
+              this.activeFilters[filterType].splice(index, 1);
+            }
+          }
+          this.applyFilters();
+        }
+
+        updateSearch(searchTerm) {
+          this.searchTerm = searchTerm;
+          this.applyFilters();
+        }
+
+        getSuggestions(prefix) {
+          return this.searchIndex.getSuggestions(prefix);
+        }
+
+        getTimeframes() {
+          return this.timeframes;
+        }
+
+        setSortOrder(order) {
+          this.sortOrder = order;
+          this.applyFilters();
+        }
+
+        applyFilters() {
+          // Start with all data
+          let result = [...this.data];
+
+          // Apply timeframe filter first
+          if (this.activeFilters.timeframe !== "All Time") {
+            const now = new Date();
+            const filterDate = new Date();
+
+            switch (this.activeFilters.timeframe) {
+              case "Last Week":
+                filterDate.setDate(now.getDate() - 7);
+                break;
+              case "Last Month":
+                filterDate.setMonth(now.getMonth() - 1);
+                filterDate.setDate(now.getDate());
+                break;
+              case "Last 3 Months":
+                filterDate.setMonth(now.getMonth() - 3);
+                filterDate.setDate(now.getDate());
+                break;
+              case "Last 6 Months":
+                filterDate.setMonth(now.getMonth() - 6);
+                filterDate.setDate(now.getDate());
+                break;
+              case "Last 9 Months":
+                filterDate.setMonth(now.getMonth() - 9);
+                filterDate.setDate(now.getDate());
+                break;
+              case "Last Year":
+                filterDate.setFullYear(now.getFullYear() - 1);
+                filterDate.setDate(now.getDate());
+                break;
+            }
+
+            result = result.filter(item => {
+              // Parse the ISO date string (YYYY-MM-DD)
+              const itemDate = new Date(item.date);
+
+              // Set times to midnight for accurate day comparison
+              const compareDate = new Date(
+                itemDate.getFullYear(),
+                itemDate.getMonth(),
+                itemDate.getDate()
+              );
+              const compareFilterDate = new Date(
+                filterDate.getFullYear(),
+                filterDate.getMonth(),
+                filterDate.getDate()
+              );
+              const compareNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+              // For future dates, use the item's date as the reference point
+              if (compareDate > compareNow) {
+                const futureFilterDate = new Date(itemDate);
+                switch (this.activeFilters.timeframe) {
+                  case "Last Week":
+                    futureFilterDate.setDate(itemDate.getDate() - 7);
+                    break;
+                  case "Last Month":
+                    futureFilterDate.setMonth(itemDate.getMonth() - 1);
+                    break;
+                  case "Last 3 Months":
+                    futureFilterDate.setMonth(itemDate.getMonth() - 3);
+                    break;
+                  case "Last 6 Months":
+                    futureFilterDate.setMonth(itemDate.getMonth() - 6);
+                    break;
+                  case "Last 9 Months":
+                    futureFilterDate.setMonth(itemDate.getMonth() - 9);
+                    break;
+                  case "Last Year":
+                    futureFilterDate.setFullYear(itemDate.getFullYear() - 1);
+                    break;
+                }
+                return compareDate >= futureFilterDate;
+              }
+
+              // For past dates, use the current date as the reference point
+              return compareDate >= compareFilterDate && compareDate <= compareNow;
+            });
+          }
+
+          // Apply search if there is a search term
+          if (this.searchTerm && this.searchTerm.trim() !== "") {
+            const searchResults = this.searchIndex.search(this.searchTerm);
+            result = result.filter(item => searchResults.includes(item));
+          }
+
+          // Apply other category filters
+          const activeFilterTypes = Object.entries(this.activeFilters).filter(
+            ([type, values]) => type !== "timeframe" && values.length > 0
+          );
+
+          if (activeFilterTypes.length > 0) {
+            result = result.filter(item => {
+              return activeFilterTypes.every(([filterType, selectedValues]) => {
+                let itemProperty;
+                switch (filterType) {
+                  case "topics":
+                    itemProperty = item.topic;
+                    break;
+                  case "product-categories":
+                    itemProperty = item.productCategory;
+                    break;
+                  case "communication-type":
+                    itemProperty = item.communicationType;
+                    break;
+                }
+
+                if (Array.isArray(itemProperty)) {
+                  return selectedValues.some(value => itemProperty.includes(value));
+                }
+                return selectedValues.includes(itemProperty);
+              });
+            });
+          }
+
+          // Apply sorting
+          result.sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return this.sortOrder === "newest" ? dateB - dateA : dateA - dateB;
+          });
+
+          this.filteredData = result;
+        }
+
+        getFilteredData() {
+          return this.filteredData;
+        }
+
+        convertToISO(dateString) {
+          // If it's already in ISO format, return as is
+          if (dateString.match(/^\d{4}-\d{2}-\d{2}/)) {
+            return dateString;
+          }
+
+          // Try different date formats
+          const formats = [
+            // Month Day, Year (e.g., "February 5, 2025")
+            /^([A-Za-z]+)\s+(\d{1,2}),\s+(\d{4})$/,
+            // Day Month Year (e.g., "5 February 2025")
+            /^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/,
+            // MM/DD/YYYY or DD/MM/YYYY
+            /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/,
+            // YYYY/MM/DD
+            /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/
+          ];
+
+          for (const format of formats) {
+            const match = dateString.match(format);
+            if (match) {
+              let year, month, day;
+
+              if (format === formats[0]) {
+                // Month Day, Year
+                const monthNames = [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December"
+                ];
+                month = (monthNames.indexOf(match[1]) + 1).toString().padStart(2, "0");
+                day = match[2].padStart(2, "0");
+                year = match[3];
+              } else if (format === formats[1]) {
+                // Day Month Year
+                const monthNames = [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December"
+                ];
+                month = (monthNames.indexOf(match[2]) + 1).toString().padStart(2, "0");
+                day = match[1].padStart(2, "0");
+                year = match[3];
+              } else if (format === formats[2]) {
+                // MM/DD/YYYY or DD/MM/YYYY
+                // Try both formats
+                const date = new Date(dateString);
+                if (!isNaN(date.getTime())) {
+                  year = date.getFullYear();
+                  month = (date.getMonth() + 1).toString().padStart(2, "0");
+                  day = date.getDate().toString().padStart(2, "0");
+                } else {
+                  continue;
+                }
+              } else if (format === formats[3]) {
+                // YYYY/MM/DD
+                year = match[1];
+                month = match[2].padStart(2, "0");
+                day = match[3].padStart(2, "0");
+              }
+
+              return `${year}-${month}-${day}`;
+            }
+          }
+
+          // If no format matches, return the original string
+          return dateString;
+        }
+
+        getActiveFilters() {
+          const filters = [];
+
+          // Add non-timeframe filters
+          Object.entries(this.activeFilters).forEach(([type, values]) => {
+            if (type !== "timeframe" && Array.isArray(values)) {
+              values.forEach(value => {
+                filters.push({
+                  type,
+                  value,
+                  displayValue: value
+                });
+              });
+            }
+          });
+
+          // Add timeframe filter if it's not "All Time"
+          if (this.activeFilters.timeframe !== "All Time") {
+            filters.push({
+              type: "timeframe",
+              value: this.activeFilters.timeframe,
+              displayValue: this.activeFilters.timeframe
+            });
+          }
+
+          return filters;
+        }
+
+        removeFilter(type, value) {
+          if (type === "timeframe") {
+            this.activeFilters.timeframe = "All Time";
+          } else {
+            const index = this.activeFilters[type].indexOf(value);
+            if (index !== -1) {
+              this.activeFilters[type].splice(index, 1);
+            }
+          }
+          this.applyFilters();
+        }
+      }
+
+      // UI Components - responsible for rendering and UI interactions
+      class FilterComponent {
+        constructor(filterType, options, container, changeCallback, filterStyle = "checkbox") {
+          this.filterType = filterType;
+          this.options = options || [];
+          this.container = container;
+          this.changeCallback = changeCallback;
+          this.filterStyle = filterStyle; // 'checkbox' or 'dropdown'
+          this.initialVisibleCount = 2;
+        }
+
+        render() {
+          const filterId = this.filterType.toLowerCase().replace(/\s+/g, "-");
+
+          let filterHTML;
+          if (this.filterStyle === "dropdown") {
+            filterHTML = `
+            <section class="filter-section" id="${filterId}-section">
+              <h2>${this.filterType}</h2>
+              <select class="filter-dropdown" id="${filterId}-select">
+                ${this.options.map(option => `<option value="${option}">${option}</option>`).join("")}
+              </select>
+            </section>
+          `;
+          } else {
+            // Existing checkbox filter HTML
+            const hasMoreOptions = this.options.length > this.initialVisibleCount;
+            filterHTML = `
+            <section class="filter-section" id="${filterId}-section">
+              <h2>${this.filterType}</h2>
+              <ul class="filter-list" role="group" aria-label="${this.filterType} filters">
+                ${this.options
+                  .filter(option => option)
+                  .map(
+                    (option, index) => `
+                    <li ${index >= this.initialVisibleCount ? `class="hidden-option ${filterId}-hidden" style="display: none;"` : 'class="flex"'}>
+                      <input type="checkbox" id="${String(option).toLowerCase().replace(/\s+/g, "-")}" name="${filterId}">
+                      <label for="${String(option).toLowerCase().replace(/\s+/g, "-")}">${option}</label>
+                    </li>
+                  `
+                  )
+                  .join("")}
+              </ul>
+              ${
+                hasMoreOptions
+                  ? `<button type="button" class="view-more" data-filter-type="${filterId}">
+                  <i class="fas fa-chevron-down"></i> View More
+                </button>`
+                  : ""
+              }
+            </section>
+          `;
+          }
+
+          this.container.insertAdjacentHTML("beforeend", filterHTML);
+          this.attachEventListeners();
+        }
+
+        attachEventListeners() {
+          const filterId = this.filterType.toLowerCase().replace(/\s+/g, "-");
+
+          if (this.filterStyle === "dropdown") {
+            const select = document.getElementById(`${filterId}-select`);
+
+            // Set initial value if it's the timeframe dropdown
+            if (filterId === "timeframe" && this.options.includes("All Time")) {
+              select.value = "All Time";
+            }
+
+            select.addEventListener("change", e => {
+              this.changeCallback(filterId, e.target.value);
+            });
+          } else {
+            // Existing checkbox event listeners
+            document
+              .querySelectorAll(`#${filterId}-section input[type="checkbox"]`)
+              .forEach(checkbox => {
+                checkbox.addEventListener("change", () => {
+                  const value = checkbox.nextElementSibling.textContent.trim();
+                  this.changeCallback(filterId, value, checkbox.checked);
+                });
+              });
+
+            const viewMoreBtn = document.querySelector(`#${filterId}-section .view-more`);
+            if (viewMoreBtn) {
+              viewMoreBtn.addEventListener("click", () => {
+                const hiddenOptions = document.querySelectorAll(`.${filterId}-hidden`);
+                const isShowingMore = viewMoreBtn.textContent.includes("View More");
+
+                hiddenOptions.forEach(option => {
+                  option.style.display = isShowingMore ? "flex" : "none";
+                });
+
+                viewMoreBtn.innerHTML = isShowingMore
+                  ? "<i class='fas fa-chevron-up'></i> View Less"
+                  : "<i class='fas fa-chevron-down'></i> View More";
+              });
+            }
+          }
+        }
+      }
+
+      class SearchComponent {
+        constructor(container, searchCallback, suggestCallback) {
+          this.container = container;
+          this.searchCallback = searchCallback;
+          this.suggestCallback = suggestCallback;
+          this.debounceTimeout = null;
+          this.selectedIndex = -1; // Track which suggestion is currently selected
+        }
+
+        render() {
+          // No need to render HTML elements as they are now included in the HTML file
+          this.attachEventListeners();
+        }
+
+        attachEventListeners() {
+          const searchInput = document.getElementById("search-input");
+          const searchButton = document.getElementById("search-button");
+          const suggestionsContainer = document.getElementById("search-suggestions");
+
+          // Search input event
+          searchInput.addEventListener("input", () => {
+            const value = searchInput.value;
+            this.selectedIndex = -1; // Reset selected index when input changes
+
+            // Clear previous timeout
+            if (this.debounceTimeout) {
+              clearTimeout(this.debounceTimeout);
+            }
+
+            // Debounce search to avoid too many updates
+            this.debounceTimeout = setTimeout(() => {
+              // Update search results
+              this.searchCallback(value);
+
+              // Show suggestions if input has value
+              if (value.trim()) {
+                const suggestions = this.suggestCallback(value);
+                this.renderSuggestions(suggestions);
+              } else {
+                // Clear suggestions if input is empty
+                suggestionsContainer.innerHTML = "";
+                suggestionsContainer.style.display = "none";
+              }
+            }, 300);
+          });
+
+          // Search button click
+          searchButton.addEventListener("click", () => {
+            this.searchCallback(searchInput.value);
+            suggestionsContainer.innerHTML = "";
+            suggestionsContainer.style.display = "none";
+          });
+
+          // Handle keyboard navigation
+          searchInput.addEventListener("keydown", e => {
+            const suggestionItems = document.querySelectorAll(".suggestion-item");
+
+            // If no suggestions are visible, don't do anything
+            if (suggestionsContainer.style.display === "none" || suggestionItems.length === 0) {
+              return;
+            }
+
+            // Handle Up Arrow
+            if (e.key === "ArrowUp") {
+              e.preventDefault(); // Prevent cursor from moving to beginning of input
+              this.selectedIndex =
+                this.selectedIndex <= 0 ? suggestionItems.length - 1 : this.selectedIndex - 1;
+              this.highlightSuggestion(suggestionItems);
+            }
+
+            // Handle Down Arrow
+            else if (e.key === "ArrowDown") {
+              e.preventDefault(); // Prevent cursor from moving to end of input
+              this.selectedIndex =
+                this.selectedIndex >= suggestionItems.length - 1 ? 0 : this.selectedIndex + 1;
+              this.highlightSuggestion(suggestionItems);
+            }
+
+            // Handle Enter key
+            else if (e.key === "Enter") {
+              // If a suggestion is selected, use that
+              if (this.selectedIndex >= 0 && this.selectedIndex < suggestionItems.length) {
+                e.preventDefault();
+                searchInput.value = suggestionItems[this.selectedIndex].textContent;
+                this.searchCallback(searchInput.value);
+                suggestionsContainer.innerHTML = "";
+                suggestionsContainer.style.display = "none";
+              } else {
+                // Otherwise perform search with current input value
+                this.searchCallback(searchInput.value);
+                suggestionsContainer.innerHTML = "";
+                suggestionsContainer.style.display = "none";
+              }
+            }
+
+            // Handle Escape key
+            else if (e.key === "Escape") {
+              suggestionsContainer.innerHTML = "";
+              suggestionsContainer.style.display = "none";
+              searchInput.focus();
+            }
+          });
+
+          // Close suggestions when clicking outside
+          document.addEventListener("click", e => {
+            if (!this.container.contains(e.target)) {
+              suggestionsContainer.innerHTML = "";
+              suggestionsContainer.style.display = "none";
+            }
+          });
+        }
+
+        highlightSuggestion(suggestionItems) {
+          // Remove highlighting from all items
+          suggestionItems.forEach(item => {
+            item.classList.remove("selected");
+          });
+
+          // Add highlighting to selected item
+          if (this.selectedIndex >= 0 && this.selectedIndex < suggestionItems.length) {
+            suggestionItems[this.selectedIndex].classList.add("selected");
+          }
+        }
+
+        renderSuggestions(suggestions) {
+          const suggestionsContainer = document.getElementById("search-suggestions");
+          this.selectedIndex = -1; // Reset selection when rendering new suggestions
+
+          if (suggestions.length === 0) {
+            suggestionsContainer.innerHTML = "";
+            suggestionsContainer.style.display = "none";
+            return;
+          }
+
+          const suggestionHTML = suggestions
+            .map(suggestion => `<div class="suggestion-item">${suggestion}</div>`)
+            .join("");
+
+          suggestionsContainer.innerHTML = suggestionHTML;
+          suggestionsContainer.style.display = "block";
+
+          // Add click event to suggestions
+          document.querySelectorAll(".suggestion-item").forEach(item => {
+            item.addEventListener("click", () => {
+              document.getElementById("search-input").value = item.textContent;
+              this.searchCallback(item.textContent);
+              suggestionsContainer.innerHTML = "";
+              suggestionsContainer.style.display = "none";
+            });
+          });
+        }
+      }
+
+      class CardListComponent {
+        constructor(container, countElement) {
+          this.container = container;
+          this.countElement = countElement;
+          this.currentPage = 1;
+          this.cardsPerPage = 24;
+          this.isShowingAll = false;
+          this.modal = document.getElementById("communicationModal");
+          this.setupModal();
+        }
+
+        setupModal() {
+          // Close modal when clicking the close button
+          const closeBtn = this.modal.querySelector(".communications-modal-close");
+          closeBtn.addEventListener("click", () => this.closeModal());
+
+          // Close modal when clicking outside
+          window.addEventListener("click", e => {
+            if (e.target === this.modal) {
+              this.closeModal();
+            }
+          });
+
+          // Close modal on escape key
+          window.addEventListener("keydown", e => {
+            if (e.key === "Escape") {
+              this.closeModal();
+            }
+          });
+        }
+
+        openModal(item) {
+          const modalImage = this.modal.querySelector(".communications-modal-image");
+          const modalTitle = this.modal.querySelector(".communications-modal-title");
+          const modalSummary = this.modal.querySelector(".communications-modal-summary");
+          const modalLearnMore = this.modal.querySelector(".communications-modal-learn-more");
+
+          modalImage.src = item.imageUrl || "";
+          modalImage.alt = item.title || "";
+          modalTitle.textContent = item.title || "";
+          modalSummary.textContent = item.summary || "";
+          modalLearnMore.href = item.url || "#";
+
+          this.modal.style.display = "block";
+          document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
+        }
+
+        closeModal() {
+          this.modal.style.display = "none";
+          document.body.style.overflow = ""; // Restore scrolling
+        }
+
+        getIconPath(communicationType) {
+          switch (communicationType.toLowerCase()) {
+            case "bulletin":
+              return "../Content/GreenheckStyles/imgs/bulletin-icon.svg";
+            case "caps update":
+              return "../Content/GreenheckStyles/imgs/caps-update-icon.svg";
+            case "insights":
+              return "../Content/GreenheckStyles/imgs/insights-icon.svg";
+            case "rep update":
+              return "../Content/GreenheckStyles/imgs/rep-update-icon.svg";
+            default:
+              return "../Content/GreenheckStyles/imgs/bulletin-icon.svg"; // Default icon for unknown types
+          }
+        }
+
+        convertToISO(dateString) {
+          // If it's already in ISO format, return as is
+          if (dateString.match(/^\d{4}-\d{2}-\d{2}/)) {
+            return dateString;
+          }
+
+          // Try different date formats
+          const formats = [
+            // Month Day, Year (e.g., "February 5, 2025")
+            /^([A-Za-z]+)\s+(\d{1,2}),\s+(\d{4})$/,
+            // Day Month Year (e.g., "5 February 2025")
+            /^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/,
+            // MM/DD/YYYY or DD/MM/YYYY
+            /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/,
+            // YYYY/MM/DD
+            /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/
+          ];
+
+          for (const format of formats) {
+            const match = dateString.match(format);
+            if (match) {
+              let year, month, day;
+
+              if (format === formats[0]) {
+                // Month Day, Year
+                const monthNames = [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December"
+                ];
+                month = (monthNames.indexOf(match[1]) + 1).toString().padStart(2, "0");
+                day = match[2].padStart(2, "0");
+                year = match[3];
+              } else if (format === formats[1]) {
+                // Day Month Year
+                const monthNames = [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December"
+                ];
+                month = (monthNames.indexOf(match[2]) + 1).toString().padStart(2, "0");
+                day = match[1].padStart(2, "0");
+                year = match[3];
+              } else if (format === formats[2]) {
+                // MM/DD/YYYY or DD/MM/YYYY
+                // Try both formats
+                const date = new Date(dateString);
+                if (!isNaN(date.getTime())) {
+                  year = date.getFullYear();
+                  month = (date.getMonth() + 1).toString().padStart(2, "0");
+                  day = date.getDate().toString().padStart(2, "0");
+                } else {
+                  continue;
+                }
+              } else if (format === formats[3]) {
+                // YYYY/MM/DD
+                year = match[1];
+                month = match[2].padStart(2, "0");
+                day = match[3].padStart(2, "0");
+              }
+
+              return `${year}-${month}-${day}`;
+            }
+          }
+
+          // If no format matches, return the original string
+          return dateString;
+        }
+
+        formatDate(dateString) {
+          const isoDate = this.convertToISO(dateString);
+          const date = new Date(isoDate);
+
+          if (isNaN(date.getTime())) {
+            return dateString; // Return original if conversion failed
+          }
+
+          return date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+          });
+        }
+
+        renderCards(data) {
+          const startIndex = 0;
+          const endIndex = this.currentPage * this.cardsPerPage;
+          const visibleData = this.isShowingAll ? data : data.slice(startIndex, endIndex);
+
+          this.container.innerHTML = this.constructCardHTML(visibleData);
+
+          // Add click handlers for view buttons
+          this.container.querySelectorAll(".view-details").forEach(button => {
+            button.addEventListener("click", e => {
+              e.preventDefault();
+              const item = JSON.parse(button.dataset.item);
+              this.openModal(item);
+            });
+          });
+
+          if (this.countElement) {
+            this.countElement.textContent = data.length;
+          }
+
+          return data.length;
+        }
+
+        constructCardHTML(items) {
+          if (items.length === 0) {
+            return '<div class="no-results">No matching communications found. Try adjusting your filters or search term.</div>';
+          }
+
+          return items
+            .map(
+              item => `
+            <article
+              class="product-card"
+              data-id="${item.id || ""}"
+              data-topic="${Array.isArray(item.topic) ? item.topic.join(",") : item.topic}"
+              data-product-category="${Array.isArray(item.productCategory) ? item.productCategory.join(",") : item.productCategory}"
+              data-communication="${item.communicationType}"
+            >
+              <div class="product-image">
+                <img src="${item.imageUrl}" alt="${item.title}" loading="lazy" />
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">${item.title}</h3>
+                <div class="product-meta-body">
+                  <div class="product-meta-info">
+                    <time datetime="${item.date}">${this.formatDate(item.date)}</time>,
+                    <span class="issue-number">${item.issueNumber}</span>
+                  </div>
+                  <div class="product-category-info">
+                    <span>${Array.isArray(item.productCategory) ? item.productCategory.join(", ") : item.productCategory}</span> |
+                    <span>${Array.isArray(item.topic) ? item.topic.join(", ") : item.topic}</span>
+                  </div>
+                </div>
+                <div class="product-footer">
+                  <div class="product-meta">
+                    <img src="${this.getIconPath(item.communicationType)}" alt="${item.communicationType} icon" class="communication-icon">
+                    <span class="communication-type">${item.communicationType}</span>
+                  </div>
+                  <button class="prd-btn view-details" data-item='${JSON.stringify(item)}' aria-label="View ${item.title}">VIEW</button>
+                </div>
+              </div>
+            </article>
+            `
+            )
+            .join("");
+        }
+
+        resetPagination() {
+          this.currentPage = 1;
+          this.isShowingAll = false;
+        }
+
+        loadMore() {
+          this.currentPage++;
+        }
+
+        showAll() {
+          this.isShowingAll = true;
+        }
+
+        showLess() {
+          this.isShowingAll = false;
+          this.currentPage = 1;
+        }
+
+        toggleShowAll() {
+          if (this.isShowingAll) {
+            this.showLess();
+          } else {
+            this.showAll();
+          }
+          return this.isShowingAll;
+        }
+      }
+
+      // Application Controller - coordinates between data and UI components
+      class CommunicationApp {
+        constructor() {
+          // Get current date for relative date calculations
+          const now = new Date();
+
+          // Calculate dates for each timeframe
+          const lastWeekDate = new Date(now);
+          lastWeekDate.setDate(now.getDate() - 3); // 3 days ago (within last week)
+
+          const lastMonthDate = new Date(now);
+          lastMonthDate.setDate(now.getDate() - 20); // 20 days ago (within last month)
+
+          const last3MonthsDate = new Date(now);
+          last3MonthsDate.setMonth(now.getMonth() - 2); // 2 months ago (within last 3 months)
+
+          const last6MonthsDate = new Date(now);
+          last6MonthsDate.setMonth(now.getMonth() - 5); // 5 months ago (within last 6 months)
+
+          const last9MonthsDate = new Date(now);
+          last9MonthsDate.setMonth(now.getMonth() - 8); // 8 months ago (within last 9 months)
+
+          const lastYearDate = new Date(now);
+          lastYearDate.setMonth(now.getMonth() - 11); // 11 months ago (within last year)
+
+          this.data = postData;
+
+          this.dataService = new CommunicationDataService(this.data);
+          this.filtersContainer = document.querySelector("#filters-container");
+          this.searchContainer = document.querySelector("#search-container");
+          this.cardsContainer = document.querySelector("#communications-container");
+          this.countElement = document.querySelector("#communication-count");
+          this.loadMoreButton = document.querySelector(".load-more");
+          this.selectedFiltersContainer = document.getElementById("filtered-tags");
+
+          this.cardList = new CardListComponent(this.cardsContainer, this.countElement);
+
+          this.initialize();
+        }
+
+        initialize() {
+          // Create and render search component
+          this.createSearchComponent();
+
+          // Create and render filter components
+          this.createFilters();
+
+          // Setup sort dropdown
+          this.setupSortDropdown();
+
+          // Initial render of cards
+          this.updateDisplay();
+
+          // Setup load more button
+          this.setupLoadMoreButton();
+
+          // Setup view toggle buttons
+          this.setupViewToggle();
+
+          // Update selected filters
+          this.updateSelectedFilters();
+        }
+
+        createSearchComponent() {
+          const searchComponent = new SearchComponent(
+            this.searchContainer,
+            this.handleSearch.bind(this),
+            this.handleSuggestions.bind(this)
+          );
+          searchComponent.render();
+        }
+
+        createFilters() {
+          // Clear filters container
+          this.filtersContainer.innerHTML = "";
+
+          // Create timeframe filter
+          new FilterComponent(
+            "Timeframe",
+            this.dataService.getTimeframes(),
+            this.filtersContainer,
+            this.handleFilterChange.bind(this),
+            "dropdown" // Specify dropdown style
+          ).render();
+
+          // Create existing filter components
+          const topics = this.dataService.getUniqueValues("topic");
+          new FilterComponent(
+            "Topics",
+            topics,
+            this.filtersContainer,
+            this.handleFilterChange.bind(this)
+          ).render();
+
+          const productCategories = this.dataService.getUniqueValues("productCategory");
+          new FilterComponent(
+            "Product Categories",
+            productCategories,
+            this.filtersContainer,
+            this.handleFilterChange.bind(this)
+          ).render();
+
+          const communicationTypes = this.dataService.getUniqueValues("communicationType");
+          new FilterComponent(
+            "Communication Type",
+            communicationTypes,
+            this.filtersContainer,
+            this.handleFilterChange.bind(this)
+          ).render();
+        }
+
+        handleFilterChange(filterType, value, isActive) {
+          // For dropdown filters like timeframe, isActive is undefined and value contains the selected option
+          if (filterType.toLowerCase() === "timeframe") {
+            this.dataService.activeFilters.timeframe = value;
+            this.dataService.applyFilters();
+          } else {
+            // For checkbox filters, use the existing updateFilter method
+            this.dataService.updateFilter(filterType, value, isActive);
+          }
+          this.cardList.resetPagination();
+          this.updateDisplay();
+          this.updateSelectedFilters();
+        }
+
+        handleSearch(searchTerm) {
+          this.dataService.updateSearch(searchTerm);
+          this.cardList.resetPagination();
+          this.updateDisplay();
+        }
+
+        handleSuggestions(prefix) {
+          return this.dataService.getSuggestions(prefix);
+        }
+
+        updateDisplay() {
+          const filteredData = this.dataService.getFilteredData();
+          const totalCount = this.cardList.renderCards(filteredData);
+
+          // Update load more button visibility
+          if (this.loadMoreButton) {
+            const shouldShowButton = totalCount > 0;
+            this.loadMoreButton.style.display = shouldShowButton ? "block" : "none";
+
+            if (this.cardList.isShowingAll || totalCount <= this.cardList.cardsPerPage) {
+              this.loadMoreButton.textContent = "SHOW LESS";
+            } else {
+              this.loadMoreButton.textContent = "LOAD MORE";
+            }
+          }
+
+          // Update selected filters
+          this.updateSelectedFilters();
+        }
+
+        setupLoadMoreButton() {
+          if (this.loadMoreButton) {
+            this.loadMoreButton.addEventListener("click", () => {
+              const isShowingAll = this.cardList.toggleShowAll();
+              this.loadMoreButton.textContent = isShowingAll ? "SHOW LESS" : "LOAD MORE";
+              this.updateDisplay();
+            });
+          }
+        }
+
+        setupViewToggle() {
+          // View toggle buttons
+          const gridViewBtn = document.querySelector(".grid-view");
+          const listViewBtn = document.querySelector(".list-view");
+
+          if (gridViewBtn && listViewBtn && this.cardsContainer) {
+            gridViewBtn.addEventListener("click", () => {
+              gridViewBtn.classList.add("active");
+              listViewBtn.classList.remove("active");
+              this.cardsContainer.classList.remove("list-view");
+              this.updateDisplay();
+            });
+
+            listViewBtn.addEventListener("click", () => {
+              listViewBtn.classList.add("active");
+              gridViewBtn.classList.remove("active");
+              this.cardsContainer.classList.add("list-view");
+              this.updateDisplay();
+            });
+          }
+        }
+
+        setupSortDropdown() {
+          const sortDropdown = document.getElementById("sort-by");
+          if (sortDropdown) {
+            sortDropdown.addEventListener("change", e => {
+              this.dataService.setSortOrder(e.target.value);
+              this.cardList.resetPagination();
+              this.updateDisplay();
+            });
+          }
+        }
+
+        updateSelectedFilters() {
+          if (!this.selectedFiltersContainer) return;
+
+          const activeFilters = this.dataService.getActiveFilters();
+          this.selectedFiltersContainer.innerHTML = activeFilters
+            .map(
+              filter => `
+            <div class="selected-filter" data-type="${filter.type}" data-value="${filter.value}">
+              ${filter.displayValue}
+              <button class="remove-filter fas fa-times" aria-label="Remove filter"></button>
+            </div>
+          `
+            )
+            .join("");
+
+          // Add click handlers for remove buttons
+          this.selectedFiltersContainer.querySelectorAll(".remove-filter").forEach(button => {
+            button.addEventListener("click", e => {
+              const filterElement = e.target.closest(".selected-filter");
+              const type = filterElement.dataset.type;
+              const value = filterElement.dataset.value;
+
+              // Remove the filter
+              this.dataService.removeFilter(type, value);
+
+              // Update UI
+              this.updateSelectedFilters();
+              this.cardList.resetPagination();
+              this.updateDisplay();
+
+              // Update checkbox/dropdown UI
+              if (type === "timeframe") {
+                const select = document.querySelector(`#timeframe-select`);
+                if (select) select.value = "All Time";
+              } else {
+                const checkbox = document.querySelector(
+                  `#${value.toLowerCase().replace(/\s+/g, "-")}`
+                );
+                if (checkbox) checkbox.checked = false;
+              }
+            });
+          });
+        }
+      }
+
+      // Add this code at the end of your existing JavaScript, just before the DOMContentLoaded event
+      class LayoutManager {
+        constructor() {
+          this.mainContainer = document.querySelector(".gh-container-xl");
+          this.titleContainer = document.getElementById("communications-page-title-container");
+          this.sortContainer = document.getElementById("communications-sort-container");
+          this.resultsCountText = document.getElementById("communications-results-count-text");
+          this.filteredTags = document.getElementById("filtered-tags");
+          this.resultsContainer = document.querySelector(".results-count");
+
+          this.mediaQuery = window.matchMedia("(max-width: 1023px)");
+          this.handleTabletLayout = this.handleTabletLayout.bind(this);
+
+          // Create containers
+          this.tabletContainer = document.createElement("div");
+          this.tabletContainer.id = "tablet-layout-container";
+
+          this.secondRowContainer = document.createElement("div");
+          this.secondRowContainer.className = "second-row-container";
+
+          // Initialize
+          this.init();
+        }
+
+        init() {
+          // Store original parent elements for restoration
+          this.titleContainerParent = this.titleContainer.parentElement;
+          this.sortContainerParent = this.sortContainer.parentElement;
+          this.resultsCountParent = this.resultsCountText.parentElement;
+          this.filteredTagsParent = this.filteredTags.parentElement;
+
+          // Add media query listener
+          this.mediaQuery.addListener(this.handleTabletLayout);
+
+          // Initial check
+          this.handleTabletLayout(this.mediaQuery);
+        }
+
+        handleTabletLayout(e) {
+          if (e.matches) {
+            // Tablet Layout
+            // Insert tablet container at the start of main container
+            this.mainContainer.insertBefore(this.tabletContainer, this.mainContainer.firstChild);
+
+            // Move elements into tablet container
+            this.tabletContainer.appendChild(this.titleContainer);
+
+            // Setup second row
+            this.secondRowContainer.appendChild(this.resultsCountText);
+            this.secondRowContainer.appendChild(this.sortContainer);
+            this.tabletContainer.appendChild(this.secondRowContainer);
+
+            // Add filtered tags
+            this.tabletContainer.appendChild(this.filteredTags);
+          } else {
+            // Desktop Layout - Restore original structure
+            if (this.tabletContainer.parentElement) {
+              this.tabletContainer.remove();
+            }
+            this.titleContainerParent.insertBefore(
+              this.titleContainer,
+              this.titleContainerParent.firstChild
+            );
+            this.sortContainerParent.appendChild(this.sortContainer);
+            this.resultsCountParent.appendChild(this.resultsCountText);
+            this.filteredTagsParent.appendChild(this.filteredTags);
+          }
+        }
+      }
+
+      // Initialize the application when the DOM is ready
+      document.addEventListener("DOMContentLoaded", () => {
+        new CommunicationApp();
+        new LayoutManager();
+      });
+    </script>
   </body>
 </html>
