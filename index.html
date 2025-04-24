@@ -57,6 +57,13 @@
       sizes="192x192"
       href="https://cms-test.greenheck.com/Content/GreenheckStyles/imgs/favicon-192.png"
     />
+    <!-- Add Google Fonts - Arial Condensed alternatives -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       /* CSS Variables for consistent styling */
       :root {
@@ -90,8 +97,8 @@
         --border-radius-large: 7px;
 
         /* Font Families */
-        --font-primary: "Helvetica-Condensed", sans-serif;
-        --font-bold: "Helvetica-Condensed-Bold", sans-serif;
+        --font-primary: "Roboto Condensed", "Arial Narrow", Arial, sans-serif;
+        --font-bold: "Roboto Condensed", "Arial Narrow", Arial, sans-serif;
         --font-icons: "Font Awesome 5 Free";
       }
 
@@ -119,14 +126,16 @@
         font-family: "Helvetica-Condensed";
         font-style: normal;
         font-weight: 400;
-        src: url("/Content/GreenheckStyles/fonts/Helvetica-Condensed.otf");
+        src: local("Arial Narrow"), local("Arial"), local("Helvetica Condensed");
+        font-display: swap;
       }
 
       @font-face {
         font-family: "Helvetica-Condensed-Bold";
         font-style: normal;
         font-weight: 700;
-        src: url("/Content/GreenheckStyles/fonts/Helvetica-Condensed-Bold.otf");
+        src: local("Arial Narrow Bold"), local("Arial Bold"), local("Helvetica Condensed Bold");
+        font-display: swap;
       }
 
       /* Font Awesome Icons */
@@ -387,7 +396,9 @@
       }
 
       .sort-container select {
-        background: #f2f2f2 url(/Content/GreenheckStyles/imgs/grey-triangle.png) no-repeat right;
+        background: #f2f2f2
+          url(https://cms-test.greenheck.com/Content/GreenheckStyles/imgs/grey-triangle.png)
+          no-repeat right;
         background-size: 20px;
         background-position-x: 197px;
         border: 1px solid var(--border-color);
@@ -884,7 +895,9 @@
         box-shadow: var(--dropdown-shadow);
         -webkit-box-shadow: var(--dropdown-shadow);
         transition: var(--transition-normal) !important;
-        background: #f2f2f2 url(/Content/GreenheckStyles/imgs/grey-triangle.png) no-repeat right;
+        background: #f2f2f2
+          url(https://cms-test.greenheck.com/Content/GreenheckStyles/imgs/grey-triangle.png)
+          no-repeat right;
         background-size: 20px;
         background-position-x: 91%;
       }
@@ -1138,7 +1151,9 @@
         }
         .filter-dropdown {
           padding: 12px 12px 11px 12px;
-          background: #f2f2f2 url(/Content/GreenheckStyles/imgs/grey-triangle.png) no-repeat right;
+          background: #f2f2f2
+            url(https://cms-test.greenheck.com/Content/GreenheckStyles/imgs/grey-triangle.png)
+            no-repeat right;
           background-size: 20px;
           background-position-x: 94%;
         }
@@ -3552,15 +3567,15 @@
         getIconPath(communicationType) {
           switch (communicationType.toLowerCase()) {
             case "bulletin":
-              return "../Content/GreenheckStyles/imgs/bulletin-icon.svg";
+              return "https://cms-test.greenheck.com/Content/GreenheckStyles/imgs/bulletin-icon.svg";
             case "caps update":
-              return "../Content/GreenheckStyles/imgs/caps-update-icon.svg";
+              return "https://cms-test.greenheck.com/Content/GreenheckStyles/imgs/caps-update-icon.svg";
             case "insights":
-              return "../Content/GreenheckStyles/imgs/insights-icon.svg";
+              return "https://cms-test.greenheck.com/Content/GreenheckStyles/imgs/insights-icon.svg";
             case "rep update":
-              return "../Content/GreenheckStyles/imgs/rep-update-icon.svg";
+              return "https://cms-test.greenheck.com/Content/GreenheckStyles/imgs/rep-update-icon.svg";
             default:
-              return "../Content/GreenheckStyles/imgs/bulletin-icon.svg"; // Default icon for unknown types
+              return "https://cms-test.greenheck.com/Content/GreenheckStyles/imgs/bulletin-icon.svg"; // Default icon for unknown types
           }
         }
 
